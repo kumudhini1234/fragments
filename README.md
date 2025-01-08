@@ -37,6 +37,6 @@ Before running any of the scripts or starting the project, make sure to install 
     npm run dev
 
 7. **Run the Project in Debug Mode**: The debug script is similar to dev, but it also starts the Node.js inspector on port 9229. This allows you to attach a debugger (like VSCode) to inspect variables and set breakpoints in your code.
-  ``bash
+  ```bash
   npm run debug
 
