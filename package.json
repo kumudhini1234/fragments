@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/kumudhini1234/fragments/issues"
   },
-  "homepage": "https://github.com/kumudhini1234/fragments#readme"
+  "homepage": "https://github.com/kumudhini1234/fragments#readme",
+  "devDependencies": {
+    "prettier": "3.4.2"
+  }
 }
