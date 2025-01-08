@@ -1,0 +1,21 @@
+{
+  "name": "fragments",
+  "private": true,
+  "version": "0.0.1",
+  "description": "Fragments back-end API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kumudhini1234/fragments.git"
+  },
+  "keywords": [],
+  "author": "Kumudhini",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/kumudhini1234/fragments/issues"
+  },
+  "homepage": "https://github.com/kumudhini1234/fragments#readme"
+}
