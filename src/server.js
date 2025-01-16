@@ -1,21 +1,25 @@
 // src/server.js
 
-// Import necessary modules 
-const express = require('express');
-const app = express();
+// We want to gracefully shutdown our server
+const stoppable = require('stoppable');
 
-// Add this condition to check LOG_LEVEL
-if (process.env.LOG_LEVEL === 'debug') {
-  console.log('Environment Variables:', process.env); // Print all environment variables
-}
+// Get our logger instance
+const logger = require('./logger');
 
-// Define a basic route for testing
-app.get('/', (req, res) => {
-  res.send('Server is running...');
-});
+// Get our express app instance
+const app = require('./app');
 
-// Start the server
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+// Get the desired port from the process' environment. Default to `8080`
+const port = parseInt(process.env.PORT || '8080', 10);
+
+// Start a server listening on this port
+const server = stoppable(
+  app.listen(port, () => {
+    // Log a message that the server has started, and which port it's using.
+    logger.info(`Server started on port ${port}`);
+    logger.debug({env:process.env}, `Environment Variables`);
+  })
+);
+
+// Export our server instance so other parts of our code can access it if necessary.
+module.exports = server;
