@@ -30,6 +30,13 @@ app.use(pino);
 // Use helmetjs security middleware
 app.use(helmet());
 
+const corsOptions = {
+  origin: ['http://localhost:1234', 'http://ec2-44-211-170-29.compute-1.amazonaws.com:8080'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+app.use(cors(corsOptions));
+
 // Use CORS middleware so we can make requests across origins
 app.use(cors());
 
