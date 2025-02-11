@@ -1,42 +1,103 @@
-# fragments
-Lab 1
+# Fragments API Service
 
-# Project Title - Fragments
+## Overview
+Fragments is a backend service that provides authenticated users with the ability to create, retrieve, update, and delete text-based fragments. The service is built using Node.js and Express, follows RESTful API principles, and integrates with AWS for hosting and authentication using Amazon Cognito.
 
+## Features
+- **User Authentication**: Secure access using Amazon Cognito.
+- **CRUD Operations**: Create, retrieve, update, and delete fragments.
+- **Storage Support**: Uses AWS infrastructure for hosting.
+- **GitHub Actions CI/CD**: Automated testing and linting with ESLint.
 
+## Installation
+### Prerequisites
+Ensure you have the following installed:
+- Node.js (>= 18.x)
+- npm (>= 9.x)
+- AWS CLI (configured with appropriate IAM roles)
+- Git
 
+### Steps
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/kumudhini1234/fragments.git
+   cd fragments
+   ```
+2. Install dependencies:
+   ```sh
+   npm install
+   ```
+3. Create a `.env` file with the following environment variables:
+   ```sh
+   AWS_REGION=<your-region>
+   COGNITO_USER_POOL_ID=<your-user-pool-id>
+   COGNITO_CLIENT_ID=<your-client-id>
+   JWT_SECRET=<your-secret>
+   ```
+4. Start the server:
+   ```sh
+   npm start
+   ```
 
----
+## Running Tests
+Run unit tests with:
+```sh
+npm test
+```
+Check test coverage:
+```sh
+npm run coverage
+```
 
-## Prerequisites
+## API Endpoints
+### Health Check
+```http
+GET /v1/health
+```
+Response:
+```json
+{
+  "status": "ok"
+}
+```
 
-Before running any of the scripts or starting the project, make sure to install the following dependencies:
+### Retrieve Fragments
+```http
+GET /v1/fragments
+Authorization: Bearer <access_token>
+```
 
-1. **Node.js**: Version 16 or above is recommended. To check your Node version:
-   ```bash
-   node -v
+### Create Fragment
+```http
+POST /v1/fragments
+Authorization: Bearer <access_token>
+Content-Type: application/json
+```
+Request Body:
+```json
+{
+  "data": "Sample fragment content"
+}
+```
 
-2. **npm**: This should be installed automatically with Node.js. Check if it's installed:
-   ```bash
-   npm -v
-  
-3. **Install Project Dependencies**: Install the project dependencies by running the following command:
-    ```bash
-    npm install
+### Delete Fragment
+```http
+DELETE /v1/fragments/:id
+Authorization: Bearer <access_token>
+```
 
-4. **Lint the project**: The lint script runs ESLint to check the JavaScript code for any style or syntax issues. This ensures your code follows best practices and adheres to your project’s coding standards.
-    ```bash
-    npm run lint
+## Deployment
+The service is deployed on AWS EC2. To restart the service:
+```sh
+npm run restart
+```
 
-5. **Start the project**: The start script will run your project normally without any automatic reloading or debugging. This is used when you're ready to run the application in production.
-    ```bash
-    npm start
+## Contributing
+1. Fork the repository.
+2. Create a feature branch: `git checkout -b feature-name`
+3. Commit changes: `git commit -m 'Add feature-name'`
+4. Push changes: `git push origin feature-name`
+5. Create a Pull Request.
 
-6. **Run the Project in Development Mode**: The dev script runs your project using nodemon, which automatically restarts your server when there are changes to any files in the src directory. This is useful for local development and quick iterations.
-    ```bash
-    npm run dev
-
-7. **Run the Project in Debug Mode**: The debug script is similar to dev, but it also starts the Node.js inspector on port 9229. This allows you to attach a debugger (like VSCode) to inspect variables and set breakpoints in your code.
-    ```bash
-    npm run debug
-
+## License
+This project is licensed under the MIT License.
