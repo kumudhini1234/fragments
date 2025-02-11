@@ -65,9 +65,16 @@ class Fragment {
     return deleteFragment(ownerId, id);
   }
 
-  save() {
-    this.updated = new Date().toISOString();
-    return writeFragment(this); // Ensure updated is passed to database
+  async save() {
+    try {
+      this.updated = new Date().toISOString();
+
+      await writeFragment(this);
+
+      return Promise.resolve();
+    } catch (err) {
+      throw new Error(`error saving fragment to database: ${err.message}`);
+    }
   }
 
   getData() {
