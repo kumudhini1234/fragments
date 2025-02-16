@@ -29,7 +29,7 @@ app.use(pino);
 app.use(helmet());
 
 const corsOptions = {
-  origin: ['http://localhost:1234', 'http://ec2-54-172-39-176.compute-1.amazonaws.com:8080'],
+  origin: ['http://localhost:1234', 'http://ec2-44-201-166-255.compute-1.amazonaws.com:8080'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
