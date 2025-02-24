@@ -1,21 +1,18 @@
-const { createSuccessResponse } = require('../../response');
-const logger = require('../../logger');
-const { Fragment } = require('../../model/fragment');
+// src/routes/api/get.js
 
+const { createSuccessResponse, createErrorResponse } = require('../../response');
+const { Fragment } = require('../../model/fragment');
+const logger = require('../../logger');
 /**
  * Get a list of fragments for the current user
  */
 module.exports = async (req, res) => {
-
-      // Fetch the fragments for the authenticated user
-      const fragments = await Fragment.byUser(req.user);
-      logger.debug({ fragments }, 'Fetched fragments for user');
-  
-      // Log the response status code
-      logger.info({ status: res.statusCode }, 'Response status code');
-  
-      // Respond with a placeholder array (empty for now)
-     // res.status(200).json(createSuccessResponse({ fragments }));
-
-  res.status(200).json(createSuccessResponse({ fragments: fragments }));
+  const expand = req.query.expand === '1'; // Check if expand query parameter is present and equals '1'
+  try {
+    const fragments = await Fragment.byUser(req.user, expand);
+    res.status(200).json(createSuccessResponse({ fragments }));
+  } catch (err) {
+    logger.error({ err, ownerId: req.user }, 'Failed to get fragments');
+    res.status(500).json(createErrorResponse(500, 'Unable to retrieve fragments'));
+  }
 };
