@@ -1,5 +1,46 @@
+// const request = require('supertest');
+// const app = require('../../src/app');
+
+// describe('POST /v1/fragments', () => {
+//   // If the request is missing the Authorization header, it should be forbidden
+//   test('unauthenticated requests are denied', () => request(app).post('/v1/fragments').expect(401));
+
+//   // If the wrong username/password pair are used (no such user), it should be forbidden
+//   test('incorrect credentials are denied', () =>
+//     request(app).post('/v1/fragments').auth('invalid@email.com', 'incorrect_password').expect(401));
+
+//   // Using a valid username/password pair should give a success result with 201 response fragment and location header to the GET URL of the fragment
+//   test('authenticated users can create a plain text fragment', async () => {
+//     const res = await request(app)
+//       .post('/v1/fragments')
+//       .auth('user1@email.com', 'password1')
+//       .set('content-type', 'text/plain')
+//       .send('This is a fragment')
+//       .expect(201); // Set the expected HTTP status code
+//     // Match the location header pattern host/v1/fragments/:id
+//     expect(res.header.location).toMatch(/\/v1\/fragments\/([\w-]+)$/);
+//   });
+
+//   // Unsupported type throws 415 error as expected
+//   test('unsupported fragment type throws 415 Error', async () => {
+//     const res = await request(app)
+//       .post('/v1/fragments')
+//       .auth('user1@email.com', 'password1')
+//       .set('content-type', 'application/xml')
+//       .send('This is a fragment')
+//       .expect(415);
+
+//     // Assert the response message
+//     expect(res.body.error.message).toBe(
+//       'The Content-Type of the fragment being sent with the request is not supported'
+//     );
+//   });
+// });
+
+//tests/unit/get.test.js
 const request = require('supertest');
 const app = require('../../src/app');
+const hashEmail = require('../../src/hash');
 
 describe('POST /v1/fragments', () => {
   // If the request is missing the Authorization header, it should be forbidden
@@ -9,30 +50,52 @@ describe('POST /v1/fragments', () => {
   test('incorrect credentials are denied', () =>
     request(app).post('/v1/fragments').auth('invalid@email.com', 'incorrect_password').expect(401));
 
-  // Using a valid username/password pair should give a success result with 201 response fragment and location header to the GET URL of the fragment
-  test('authenticated users can create a plain text fragment', async () => {
+  // Authenticated users can create a plain text fragment
+  test('authenticated users can create a plain text fragment and response includes expected fragment properties', async () => {
+    const data = 'This is a plain text fragment';
     const res = await request(app)
       .post('/v1/fragments')
       .auth('user1@email.com', 'password1')
-      .set('content-type', 'text/plain')
-      .send('This is a fragment')
-      .expect(201); // Set the expected HTTP status code
-    // Match the location header pattern host/v1/fragments/:id
-    expect(res.header.location).toMatch(/\/v1\/fragments\/([\w-]+)$/);
+      .send(data)
+      .set('Content-Type', 'text/plain');
+
+    // Check status code
+    expect(res.statusCode).toBe(201);
+    expect(res.body.status).toBe('ok');
+
+    const fragment = res.body.fragment;
+    const expectEmail = hashEmail('user1@email.com');
+    // Check responses include all necessary properties
+    expect(fragment).toHaveProperty('id');
+    expect(fragment).toHaveProperty('created');
+    expect(fragment).toHaveProperty('updated');
+    expect(fragment).toHaveProperty('ownerId');
+    expect(fragment).toHaveProperty('type');
+    expect(fragment).toHaveProperty('size');
+
+    // Make sure the created and updated value is ISO string format
+    expect(fragment.created).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/);
+    expect(fragment.updated).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/);
+    // Check if the values match expectation
+    expect(fragment.ownerId).toBe(expectEmail);
+    expect(fragment.type).toBe('text/plain');
+    expect(fragment.size).toBe(data.length);
+    expect(res.headers.location).toContain(`/v1/fragments/${fragment.id}`);
   });
 
-  // Unsupported type throws 415 error as expected
-  test('unsupported fragment type throws 415 Error', async () => {
+  // Request with unsupported content type will be rejected with 415 status code
+  test('unsupported Content-Type is rejected with 415 error', async () => {
+    const xmlData = '<note><to>User</to><from>Admin</from><message>Hello</message></note>';
+
     const res = await request(app)
       .post('/v1/fragments')
       .auth('user1@email.com', 'password1')
-      .set('content-type', 'application/xml')
-      .send('This is a fragment')
-      .expect(415);
+      .send(xmlData)
+      .set('Content-Type', 'application/xml');
 
-    // Assert the response message
-    expect(res.body.error.message).toBe(
-      'The Content-Type of the fragment being sent with the request is not supported'
-    );
+    // Check status code and error message
+    expect(res.statusCode).toBe(415);
+    expect(res.body.status).toBe('error');
+    expect(res.body.error.message).toBe('Unsupported Content-Type');
   });
 });
