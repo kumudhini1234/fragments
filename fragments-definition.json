@@ -1,5 +1,5 @@
 {
-  "taskDefinitionArn": "arn:aws:ecs:us-east-1:359673186990:task-definition/fragments-task:8",
+  "taskDefinitionArn": "arn:aws:ecs:us-east-1:359673186990:task-definition/fragments-task:9",
   "containerDefinitions": [
       {
           "name": "fragments-container",
@@ -27,7 +27,7 @@
               },
               {
                   "name": "API_URL",
-                  "value": "http://ec2-44-204-233-2.compute-1.amazonaws.com:8080"
+                  "value": "http://fragments-lb-240530837.us-east-1.elb.amazonaws.com/"
               },
               {
                   "name": "PORT",
@@ -69,7 +69,7 @@
   "taskRoleArn": "arn:aws:iam::359673186990:role/LabRole",
   "executionRoleArn": "arn:aws:iam::359673186990:role/LabRole",
   "networkMode": "awsvpc",
-  "revision": 8,
+  "revision": 9,
   "volumes": [],
   "status": "ACTIVE",
   "requiresAttributes": [
@@ -115,7 +115,7 @@
       "cpuArchitecture": "X86_64",
       "operatingSystemFamily": "LINUX"
   },
-  "registeredAt": "2025-03-29T19:10:33.954Z",
+  "registeredAt": "2025-03-29T19:44:45.693Z",
   "registeredBy": "arn:aws:sts::359673186990:assumed-role/voclabs/user2480918=kreddicherla@myseneca.ca",
   "enableFaultInjection": false,
   "tags": []
