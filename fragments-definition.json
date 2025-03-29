@@ -1,110 +1,122 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:us-east-1:359673186990:task-definition/fragments-task:1",
-    "containerDefinitions": [
+  "taskDefinitionArn": "arn:aws:ecs:us-east-1:359673186990:task-definition/fragments-task:8",
+  "containerDefinitions": [
       {
-        "name": "fragments-container",
-        "image": "359673186990.dkr.ecr.us-east-1.amazonaws.com/fragments:v0.7.0",
-        "cpu": 256,
-        "memoryReservation": 512,
-        "portMappings": [
-          {
-            "name": "fragments-container-80-tcp",
-            "containerPort": 80,
-            "hostPort": 80,
-            "protocol": "tcp",
-            "appProtocol": "http"
-          }
-        ],
-        "essential": true,
-        "environment": [
-          {
-            "name": "PORT",
-            "value": "80"
+          "name": "fragments-container",
+          "image": "kumudhini123/fragments:latest",
+          "cpu": 256,
+          "memoryReservation": 512,
+          "portMappings": [
+              {
+                  "name": "fragments-container-80-tcp",
+                  "containerPort": 80,
+                  "hostPort": 80,
+                  "protocol": "tcp",
+                  "appProtocol": "http"
+              }
+          ],
+          "essential": true,
+          "environment": [
+              {
+                  "name": "AWS_COGNITO_POOL_ID",
+                  "value": "us-east-1_WO4onM956"
+              },
+              {
+                  "name": "AWS_REGION",
+                  "value": "us-east-1"
+              },
+              {
+                  "name": "API_URL",
+                  "value": "http://ec2-44-204-233-2.compute-1.amazonaws.com:8080"
+              },
+              {
+                  "name": "PORT",
+                  "value": "80"
+              },
+              {
+                  "name": "AWS_COGNITO_DOMAIN",
+                  "value": "WO4onM956"
+              },
+              {
+                  "name": "AWS_COGNITO_CLIENT_ID",
+                  "value": "6pngljiukgicf6quateloe0mhm"
+              },
+              {
+                  "name": "LOG_LEVEL",
+                  "value": "debug"
+              }
+          ],
+          "environmentFiles": [],
+          "mountPoints": [],
+          "volumesFrom": [],
+          "ulimits": [],
+          "logConfiguration": {
+              "logDriver": "awslogs",
+              "options": {
+                  "awslogs-group": "/ecs/fragments-task",
+                  "mode": "non-blocking",
+                  "awslogs-create-group": "true",
+                  "max-buffer-size": "25m",
+                  "awslogs-region": "us-east-1",
+                  "awslogs-stream-prefix": "ecs"
+              },
+              "secretOptions": []
           },
-          {
-            "name": "LOG_LEVEL",
-            "value": "debug"
-          },
-          {
-            "name": "AWS_S3_BUCKET_NAME",
-            "value": "kreddicherla-fragments"
-          },
-          {
-            "name": "AWS_DYNAMODB_TABLE_NAME",
-            "value": "fragments"
-          }
-        ],
-        "environmentFiles": [],
-        "mountPoints": [],
-        "volumesFrom": [],
-        "ulimits": [],
-        "logConfiguration": {
-          "logDriver": "awslogs",
-          "options": {
-            "awslogs-group": "/ecs/fragments-task",
-            "mode": "non-blocking",
-            "awslogs-create-group": "true",
-            "max-buffer-size": "25m",
-            "awslogs-region": "us-east-1",
-            "awslogs-stream-prefix": "ecs"
-          },
-          "secretOptions": []
-        },
-        "systemControls": []
+          "systemControls": []
       }
-    ],
-    "family": "fragments-task",
-    "taskRoleArn": "arn:aws:iam::359673186990:role/LabRole",
-    "executionRoleArn": "arn:aws:iam::359673186990:role/LabRole",
-    "networkMode": "awsvpc",
-    "revision": 1,
-    "volumes": [],
-    "status": "ACTIVE",
-    "requiresAttributes": [
+  ],
+  "family": "fragments-task",
+  "taskRoleArn": "arn:aws:iam::359673186990:role/LabRole",
+  "executionRoleArn": "arn:aws:iam::359673186990:role/LabRole",
+  "networkMode": "awsvpc",
+  "revision": 8,
+  "volumes": [],
+  "status": "ACTIVE",
+  "requiresAttributes": [
       {
-        "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+          "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
       },
       {
-        "name": "ecs.capability.execution-role-awslogs"
+          "name": "ecs.capability.execution-role-awslogs"
       },
       {
-        "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+          "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
       },
       {
-        "name": "com.amazonaws.ecs.capability.docker-remote-api.1.28"
+          "name": "com.amazonaws.ecs.capability.docker-remote-api.1.28"
       },
       {
-        "name": "com.amazonaws.ecs.capability.docker-remote-api.1.21"
+          "name": "com.amazonaws.ecs.capability.docker-remote-api.1.21"
       },
       {
-        "name": "com.amazonaws.ecs.capability.task-iam-role"
+          "name": "com.amazonaws.ecs.capability.task-iam-role"
       },
       {
-        "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+          "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
       },
       {
-        "name": "ecs.capability.task-eni"
+          "name": "ecs.capability.task-eni"
       },
       {
-        "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
+          "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
       }
-    ],
-    "placementConstraints": [],
-    "compatibilities": [
+  ],
+  "placementConstraints": [],
+  "compatibilities": [
       "EC2",
       "FARGATE"
-    ],
-    "requiresCompatibilities": [
+  ],
+  "requiresCompatibilities": [
       "FARGATE"
-    ],
-    "cpu": "256",
-    "memory": "512",
-    "runtimePlatform": {
+  ],
+  "cpu": "256",
+  "memory": "512",
+  "runtimePlatform": {
       "cpuArchitecture": "X86_64",
       "operatingSystemFamily": "LINUX"
-    },
-    "registeredAt": "2024-03-26T20:26:49.628Z",
-    "registeredBy": "arn:aws:sts::359673186990:assumed-role/voclabs/user3497448=Kumu",
-    "tags": []
-  }
-  
+  },
+  "registeredAt": "2025-03-29T19:10:33.954Z",
+  "registeredBy": "arn:aws:sts::359673186990:assumed-role/voclabs/user2480918=kreddicherla@myseneca.ca",
+  "enableFaultInjection": false,
+  "tags": []
+}
