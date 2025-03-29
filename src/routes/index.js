@@ -43,7 +43,7 @@ router.get('/', (req, res) => {
     // githubUrl: 'https://github.com/kumudhini1234/fragments',
     // version,
     // TODO: make sure these are changed for your name and repo
-    author: 'Kumudhini Reddicherla',
+    author: 'Kumudhini',
     githubUrl: 'https://github.com/kumudhini1234/fragments',
     version,
     // Include the hostname in the response
