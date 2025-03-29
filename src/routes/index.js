@@ -12,10 +12,12 @@ const { authenticate } = require('../auth');
 const { createSuccessResponse } = require('../response');
 
 // version and author from package.json
-const { version, author } = require('../../package.json');
+const { version } = require('../../package.json');
 
 // Create a router that we can use to mount our API
 const router = express.Router();
+
+const { hostname } = require('os');
 
 /**
  * Expose all of our API routes on /v1/* to include an API version.
@@ -34,12 +36,18 @@ router.get('/', (req, res) => {
   // Send a 200 'OK' response
   res.status(200).json(
     createSuccessResponse({
-    status: 'ok',
-    fragments: [],
-    author,
-    // Use your own GitHub URL for this!
+    // status: 'ok',
+    // fragments: [],
+    // author,
+    // // Use your own GitHub URL for this!
+    // githubUrl: 'https://github.com/kumudhini1234/fragments',
+    // version,
+    // TODO: make sure these are changed for your name and repo
+    author: 'Kumudhini Reddicherla',
     githubUrl: 'https://github.com/kumudhini1234/fragments',
     version,
+    // Include the hostname in the response
+    hostname: hostname(),
   })
 );
 });
