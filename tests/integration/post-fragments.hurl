@@ -9,7 +9,7 @@ user1@email.com:password1
 # Body of the request goes in ```...``` when it's a string
 `This is a fragment!`
 
-# We expect to get back an HTTP 201
+# 1. We expect to get back an HTTP 201
 HTTP/1.1 201
 # We have various assertions about the response that we want to check
 [Asserts]

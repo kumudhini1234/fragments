@@ -48,6 +48,7 @@
     "html-to-text": "^9.0.5",
     "http-auth": "^4.2.0",
     "http-auth-passport": "^1.0.7",
+    "js-yaml": "^4.1.0",
     "markdown-it": "^14.1.0",
     "papaparse": "^5.5.2",
     "passport": "^0.7.0",
