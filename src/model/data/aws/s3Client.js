@@ -44,7 +44,7 @@ const getS3Endpoint = () => {
  * NOTE: we want to use this client with both AWS S3, but also
  * MinIO and LocalStack in development and testing. We may or may
  * not have various configuration settings, and will pass
- * undefined when we don't (i.e. we'll ignore them).
+ * `undefined` when we don't (i.e. we'll ignore them).
  */
 module.exports = new S3Client({
   // The region is always required

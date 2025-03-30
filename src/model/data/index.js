@@ -1,4 +1,5 @@
-// src/model/data/index.js
+// // src/model/data/index.js
+// module.exports = require('./memory');
 
 // If the environment sets an AWS Region, we'll use AWS backend
 // services (S3, DynamoDB); otherwise, we'll use an in-memory db.

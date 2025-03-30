@@ -1,47 +1,56 @@
 # tests/integration/lab-9-s3.hurl
 
-# 1. Posting a text fragment to /v1/fragments
+# 1: POST a new text fragment
 POST http://localhost:8080/v1/fragments
 Content-Type: text/plain
 [BasicAuth]
 user1@email.com:password1
 `Hello S3!`
 
-# Expected Response
+# 2: Expect HTTP 201 Created and capture location Header
 HTTP/1.1 201
+[Asserts]
+header "Location" matches "^http:\/\/localhost:8080\/v1\/fragments\/[A-Za-z0-9_-]+$"
+jsonpath "$.status" == "ok"
+jsonpath "$.fragment.id" matches "^[0-9a-fA-F-]{36}$"
+jsonpath "$.fragment.ownerId" matches "^[0-9a-fA-F]+$"
+jsonpath "$.fragment.created" isString
+jsonpath "$.fragment.updated" isString
+jsonpath "$.fragment.type" == "text/plain"
+jsonpath "$.fragment.size" == 9 # "Hello S3!" is 8 characters
 [Captures]
 url: header "Location"
 
-
-# 2. Get the fragment
+# 3: GET the fragment just created using url as an authorized user
 GET {{url}}
 [BasicAuth]
 user1@email.com:password1
 
-# Expected Response
+# 4: Expect HTTP 200 OK with correct content
 HTTP/1.1 200
 Content-Type: text/plain
+Content-Length: 9
 [Asserts]
 body == "Hello S3!"
 
-
-# 3. Delete the fragment
+# 5: DELETE the fragment using the url as an authorized user
 DELETE {{url}}
 [BasicAuth]
 user1@email.com:password1
 
-# Expected Response
+# 6: Expect HTTP 200 OK
 HTTP/1.1 200
+[Asserts]
+jsonpath "$.status" == "ok"
 
-
-# 4. Send a get request to confirm fragment not found
+# 7: Try to GET the deleted fragment
 GET {{url}}
 [BasicAuth]
 user1@email.com:password1
 
-# Expected Response
+# 8: Expect HTTP 404 Not Found
 HTTP/1.1 404
 [Asserts]
 jsonpath "$.status" == "error"
 jsonpath "$.error.code" == 404
-jsonpath "$.error.message" == "Fragment by id not found"
+jsonpath "$.error.message" matches "^Fragment with ID [A-Za-z0-9-]+ not found$"

@@ -3,7 +3,7 @@
   "containerDefinitions": [
       {
           "name": "fragments-container",
-          "image": "359673186990.dkr.ecr.us-east-1.amazonaws.com/fragments:v0.7.3",
+          "image": "kumudhini123/fragments:latest",
           "cpu": 256,
           "memoryReservation": 512,
           "portMappings": [
