@@ -1,32 +1,21 @@
-// //tests/unit/fragment.test.js
-
 const { Fragment } = require('../../src/model/fragment');
 
-// Wait for a certain number of ms (default 50). Feel free to change this value
+// Wait for a certain number of ms. Feel free to change this value
 // if it isn't long enough for your test runs. Returns a Promise.
-const wait = async (ms = 50) => new Promise((resolve) => setTimeout(resolve, ms));
+const wait = async (ms = 10) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const validTypes = [
   `text/plain`,
   `text/markdown`,
   `text/html`,
+  `text/csv`,
   `application/json`,
+  `application/yaml`,
   `image/png`,
   `image/jpeg`,
   `image/webp`,
+  `image/avif`,
   `image/gif`,
-
-  /*
-   Currently, only text/plain is supported. Others will be added later.
-
-  `text/markdown`,
-  `text/html`,
-  `application/json`,
-  `image/png`,
-  `image/jpeg`,
-  `image/webp`,
-  `image/gif`,
-  */
 ];
 
 describe('Fragment class', () => {
@@ -177,6 +166,60 @@ describe('Fragment class', () => {
         size: 0,
       });
       expect(fragment.formats).toEqual(['text/plain']);
+    });
+
+    test('formats returns the expected result for supported MIME types', () => {
+      const testCases = [
+        {
+          type: 'text/markdown',
+          expected: ['text/markdown', 'text/html', 'text/plain'],
+        },
+        {
+          type: 'text/html',
+          expected: ['text/html', 'text/plain'],
+        },
+        {
+          type: 'text/csv',
+          expected: ['text/csv', 'text/plain', 'application/json'],
+        },
+        {
+          type: 'application/json',
+          expected: ['application/json', 'application/yaml', 'text/plain'],
+        },
+        {
+          type: 'application/yaml',
+          expected: ['application/yaml', 'text/plain'],
+        },
+        {
+          type: 'image/png',
+          expected: ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif'],
+        },
+        {
+          type: 'image/jpeg',
+          expected: ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif'],
+        },
+        {
+          type: 'image/webp',
+          expected: ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif'],
+        },
+        {
+          type: 'image/avif',
+          expected: ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif'],
+        },
+        {
+          type: 'image/gif',
+          expected: ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif'],
+        },
+      ];
+
+      testCases.forEach(({ type, expected }) => {
+        const fragment = new Fragment({
+          ownerId: '1234',
+          type,
+          size: 0,
+        });
+        expect(fragment.formats).toEqual(expected);
+      });
     });
   });
 

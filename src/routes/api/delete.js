@@ -21,7 +21,7 @@ module.exports = async (req, res) => {
     const fragment = await Fragment.byId(req.user, fragmentId);
     if (!fragment) {
       logger.warn(`Fragment with ID ${fragmentId} not found for user ${req.user}`);
-      return res.status(404).json(createErrorResponse(404, 'Fragment not found'));
+      return res.status(404).json(createErrorResponse(404, 'Fragment not found')); // Adjusted the error message
     }
 
     // Delete the fragment
@@ -34,12 +34,12 @@ module.exports = async (req, res) => {
     // If the error is related to fragment not being found, return 404
     if (error.message.includes('Fragment not found')) {
       logger.warn(`Fragment with ID ${fragmentId} not found for user ${req.user}`);
-      return res.status(404).json(createErrorResponse(404, 'Fragment not found'));
+      return res.status(404).json(createErrorResponse(404, 'Fragment not found')); // Adjusted the error message
     }
 
     // For other errors (like data retrieval issues), return 500
     return res
       .status(500)
-      .json(createErrorResponse(500, `Failed to retrieve data: ${error.message}`));
+      .json(createErrorResponse(500, `Failed to retrieve data: ${error.message}`)); // Adjusted the error message
   }
 };

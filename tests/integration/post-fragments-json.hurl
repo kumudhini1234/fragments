@@ -1,27 +1,40 @@
-# POST to /v1/fragments with JSON Content-Type
+# tests/integration/post-fragments-json.hurl
+# 1. Posting a fragment of json type
+# Authenticated POST to /v1/fragments
 POST http://localhost:8080/v1/fragments
 Content-Type: application/json
 [BasicAuth]
 user1@email.com:password1
-`{"message": "This is a JSON fragment"}`
+{
+  "title": "Hello World", 
+  "description": "This is a simple JSON example."
+}
 
-# Expect HTTP 201 response
+# Expected Response
 HTTP/1.1 201
 [Asserts]
-header "Location" matches "^http:\/\/localhost:8080\/v1\/fragments\/[A-Za-z0-9_-]+$"
+header "Location" matches "^http:\/\/localhost:8080\/v1\/fragments\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
 jsonpath "$.status" == "ok"
+jsonpath "$.fragment.id" matches "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+jsonpath "$.fragment.ownerId" matches "^[0-9a-fA-F]+$"
+jsonpath "$.fragment.created" isString
+jsonpath "$.fragment.updated" isString
 jsonpath "$.fragment.type" == "application/json"
-
-# Capture Location URL
+jsonpath "$.fragment.size" == 83
+# Capture the Location URL into a variable named url
 [Captures]
 url: header "Location"
 
-# GET same fragment
+
+# 2. Try to GET the fragment we just posted by its URL
 GET {{url}}
 [BasicAuth]
 user1@email.com:password1
 
+# Expected Response
 HTTP/1.1 200
 Content-Type: application/json
+Content-Length: 83
 [Asserts]
-body == "{\"message\": \"This is a JSON fragment\"}"
+jsonpath "$.title" == "Hello World"
+jsonpath "$.description" == "This is a simple JSON example."
