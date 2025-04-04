@@ -1,10 +1,7 @@
 # .github/workflows/ci.yml
 
-# Continuous Integration (CI) Workflow
 name: ci
 
-# This workflow will run whenever we push commits to the `main` branch, or
-# whenever there's a pull request to the `main` branch.
 on:
   pull_request:
     branches:
@@ -76,13 +73,11 @@ jobs:
 
       - name: Install Hurl
         run: |
-          sudo npm install -g hurl@0.2.7
-          # Add Hurl to PATH
-          echo "Adding Hurl to PATH"
-          echo "$(npm root -g)/hurl/bin" >> $GITHUB_PATH
-
-      - name: Verify Hurl installation
-        run: |
+          # Download and install Hurl directly from GitHub releases
+          curl -LO https://github.com/Orange-OpenSource/hurl/releases/download/0.2.7/hurl-0.2.7-x86_64-linux.tar.gz
+          tar xvzf hurl-0.2.7-x86_64-linux.tar.gz
+          sudo mv hurl-0.2.7/hurl /usr/local/bin/
+          rm -rf hurl-0.2.7*
           hurl --version
 
       - name: Build Containers
