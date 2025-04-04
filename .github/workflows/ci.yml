@@ -52,12 +52,20 @@ jobs:
           cache: 'npm'
       - run: npm install
 
-      - name: Install Hurl
+      - name: Install Hurl (Reliable Method)
         run: |
-          echo "Installing Hurl 6.1.1..."
-          curl -sSL https://github.com/Orange-OpenSource/hurl/releases/download/6.1.1/hurl-6.1.1-x86_64-linux.tar.gz -o hurl.tar.gz
-          tar -xzf hurl.tar.gz -C /usr/local/bin/ --strip-components=1 hurl-6.1.1/hurl
-          rm hurl.tar.gz
+          echo "Installing Hurl..."
+          # First try the official release
+          if ! curl -sSL https://github.com/Orange-OpenSource/hurl/releases/download/6.1.1/hurl-6.1.1-x86_64-linux.tar.gz -o hurl.tar.gz || ! tar -tzf hurl.tar.gz >/dev/null; then
+            echo "Official release download failed, trying alternative..."
+            # Fallback to direct binary download
+            wget https://github.com/Orange-OpenSource/hurl/releases/download/6.1.1/hurl-linux-x86_64 -O /usr/local/bin/hurl
+            chmod +x /usr/local/bin/hurl
+          else
+            echo "Extracting official package..."
+            tar -xzf hurl.tar.gz -C /usr/local/bin/ --strip-components=1 hurl-6.1.1/hurl
+            rm hurl.tar.gz
+          fi
           hurl --version
 
       - name: Build Containers
