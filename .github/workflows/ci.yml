@@ -79,6 +79,7 @@ jobs:
           # Add /usr/local/lib/node_modules/hurl/bin to the PATH
           export PATH=/usr/local/lib/node_modules/hurl/bin:$PATH
           echo "Updated PATH: $PATH"
+          # Check Hurl installation
           which hurl || echo "Hurl not found"
           hurl --version || echo "Hurl installation failed"
           
