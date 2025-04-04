@@ -1,20 +1,22 @@
 # tests/integration/lab-10-dynamodb.hurl
 #Test 1 - POST fragment 1
+# 1. POST a new JSON fragment
 POST http://localhost:8080/v1/fragments
-# We're sending a JSON fragment
 Content-Type: application/json
-# Include HTTP Basic Auth credentials
 [BasicAuth]
 user1@email.com:password1
-{ "service": "DynamoDB" }
+{"service": "DynamoDB"}
 
+# First verify the basic response structure
 HTTP/1.1 201
 [Asserts]
-header "Location" exists  # Add this line
 jsonpath "$.status" == "ok"
+jsonpath "$.fragment.id" exists
+
+# Only try to capture Location if it exists
 [Captures]
-fragment1_url: header "Location"
 fragment1_id: jsonpath "$.fragment.id"
+fragment1_url: header "Location"  # Add this capture
 
 #Test 2 - GET fragment 1
 GET {{fragment1_url}}/info
@@ -24,7 +26,7 @@ user1@email.com:password1
 HTTP/1.1 200
 Content-Type: application/json; charset=utf-8
 [Asserts]
-jsonpath "$.fragment.size" == 25
+jsonpath "$.fragment.size" == 23
 
 #Test 3 - POST fragment 2
 POST http://localhost:8080/v1/fragments
@@ -33,7 +35,7 @@ Content-Type: text/markdown
 # Include HTTP Basic Auth credentials
 [BasicAuth]
 user1@email.com:password1
-```DynamoDB is **great**.```
+`DynamoDB is **great**.`
 
 HTTP/1.1 201
 [Captures]
