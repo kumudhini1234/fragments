@@ -59,6 +59,7 @@ jobs:
       # Install Hurl globally
       - name: Install Hurl
         run: npm install -g hurl@0.2.7
+        hurl --version  # Check if hurl is available globally
       - name: Build Containers
         run: docker compose up -d
       - name: Setup Local AWS Resources
