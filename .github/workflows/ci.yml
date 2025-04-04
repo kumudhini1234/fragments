@@ -115,26 +115,4 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: ${{ env.DOCKERHUB_REPO }}:${{ env.SHA_TAG }}, ${{ env.DOCKERHUB_REPO }}:main, ${{ env.DOCKERHUB_REPO }}:latest- name: Run ESLint
-  run: npm run lint
-  env:
-    LOG_LEVEL: debug
-  continue-on-error: true
-
-- name: Run Hurl Tests
-  run: npm run test:integration
-  env:
-    LOG_LEVEL: debug
-  continue-on-error: true
-
-- name: Build Containers
-  run: docker compose up -d
-  env:
-    COMPOSE_LOG_LEVEL: DEBUG
-  continue-on-error: true
-
-- name: Setup Local AWS Resources
-  run: ./scripts/local-aws-setup.sh
-  env:
-    LOG_LEVEL: debug
-  continue-on-error: true
+          tags: ${{ env.DOCKERHUB_REPO }}:${{ env.SHA_TAG }}, ${{ env.DOCKERHUB_REPO }}:main, ${{ env.DOCKERHUB_REPO }}:latest
