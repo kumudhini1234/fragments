@@ -4,8 +4,7 @@
 name: ci
 
 # This workflow will run whenever we push commits to the `main` branch, or
-# whenever there's a pull request to the `main` branch. See:
-# https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#on
+# whenever there's a pull request to the `main` branch.
 on:
   pull_request:
     branches:
@@ -77,9 +76,11 @@ jobs:
 
       - name: Install Hurl globally and ensure it's in path
         run: |
-          npm install -g hurl@0.2.7
-          export PATH=$(npm config get prefix)/bin:$PATH
-          echo "New PATH: $PATH"
+          sudo npm install -g hurl@0.2.7
+          npm_prefix=$(npm config get prefix)
+          echo "npm global prefix: $npm_prefix"
+          export PATH=$npm_prefix/bin:$PATH
+          echo "Updated PATH: $PATH"
           which hurl
           hurl --version
 
