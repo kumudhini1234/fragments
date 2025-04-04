@@ -18,7 +18,7 @@ GET {{fragment1_url}}/info
 user1@email.com:password1
 #Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhc3N3b3JkMQ==
 
-HTTP 200
+HTTP/1.1 200
 [Asserts]
 jsonpath "$.status" == "ok"
 jsonpath "$.fragment.id" matches /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/
@@ -49,7 +49,7 @@ GET {{fragment2_url}}/info
 user1@email.com:password1
 #Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhc3N3b3JkMQ==
 
-HTTP 200
+HTTP/1.1 200
 [Asserts]
 jsonpath "$.status" == "ok"
 jsonpath "$.fragment.id" matches /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/
@@ -108,7 +108,7 @@ user1@email.com:password1
 
 # Make sure it returns the expected values
 # Status code 200
-HTTP 200
+HTTP/1.1 200
 
 [Asserts]
 jsonpath "$.fragments" not includes {{fragment1_id}}
