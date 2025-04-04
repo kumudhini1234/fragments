@@ -96,7 +96,7 @@ jobs:
         run: npm install
       
       - name: Install Hurl globally
-        run: npm install -g hurl@0.2.7
+        run: sudo npm install -g hurl@0.2.7
         
       - name: Build Containers
         run: docker compose up -d
