@@ -56,6 +56,9 @@ jobs:
       - name: Install node dependencies
         # NOTE: we need to install dev dependencies too vs. production only for hurl
         run: npm install
+      # Install Hurl globally
+      - name: Install Hurl
+        run: npm install -g hurl
       - name: Build Containers
         run: docker compose up -d
       - name: Setup Local AWS Resources
