@@ -42,13 +42,23 @@ jobs:
           cache: 'npm'
       - run: npm ci
 
-      - name: Install Chocolatey
+      - name: Configure Chocolatey
         shell: pwsh
         run: |
-          Set-ExecutionPolicy Bypass -Scope Process -Force
-          [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
-          iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-          refreshenv
+          # Ensure Chocolatey is properly initialized
+          if (Test-Path "$env:ChocolateyInstall\bin\choco.exe") {
+              Write-Host "Chocolatey already installed, ensuring it's up to date"
+              & "$env:ChocolateyInstall\bin\choco.exe" upgrade chocolatey -y
+              Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+              refreshenv
+          } else {
+              Write-Host "Installing Chocolatey"
+              Set-ExecutionPolicy Bypass -Scope Process -Force
+              [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+              iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+              Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+              refreshenv
+          }
 
       - name: Install Hurl
         shell: pwsh
