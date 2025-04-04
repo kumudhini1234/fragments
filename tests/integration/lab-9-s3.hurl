@@ -1,4 +1,4 @@
-# 1. Post text fragment
+# 1. Post text fragment (WORKING VERSION)
 POST http://localhost:8080/v1/fragments
 Content-Type: text/plain
 [BasicAuth]
