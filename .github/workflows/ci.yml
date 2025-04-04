@@ -58,23 +58,7 @@ jobs:
         run: npm install
       # Install Hurl globally
       - name: Install Hurl
-        run: npm install -g hurl@0.2.7- name: Run ESLint
-  run: npm run lint
-  env:
-    LOG_LEVEL: debug
-  continue-on-error: true
-
-- name: Run Hurl Tests
-  run: npm run test:integration
-  env:
-    LOG_LEVEL: debug
-  continue-on-error: true
-
-- name: Run Unit Tests
-  run: npm install-ci-test
-  env:
-    LOG_LEVEL: debug
-  continue-on-error: true
+        run: npm install -g hurl@0.2.7
       - name: Build Containers
         run: docker compose up -d
       - name: Setup Local AWS Resources
