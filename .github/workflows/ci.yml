@@ -13,7 +13,7 @@ on:
 jobs:
   lint:
     name: ESLint
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -41,7 +41,7 @@ jobs:
 
   unit-tests:
     name: Unit Tests
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -57,7 +57,7 @@ jobs:
 
   integration-tests:
     name: Integration Tests
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -73,7 +73,19 @@ jobs:
 
       - name: Install Hurl
         run: |
-          choco install hurl -y --version=6.1.1
+          # Download and install Hurl directly from GitHub releases
+          echo "Downloading Hurl..."
+          curl -sSL https://github.com/Orange-OpenSource/hurl/releases/download/1.6.1/hurl-1.6.1-x86_64-linux.tar.gz -o hurl.tar.gz
+          
+          echo "Verifying download..."
+          file hurl.tar.gz | grep 'gzip compressed data' || (echo "Download failed - not a valid gzip file"; exit 1)
+          
+          echo "Installing Hurl..."
+          tar xvzf hurl.tar.gz
+          sudo mv hurl-1.6.1/hurl /usr/local/bin/
+          rm -rf hurl.tar.gz hurl-1.6.1
+          
+          echo "Verifying installation..."
           hurl --version
 
       - name: Build Containers
@@ -81,27 +93,6 @@ jobs:
 
       - name: Setup Local AWS Resources
         run: ./scripts/local-aws-setup.sh
-
-      - name: Wait for API readiness
-        run: |
-          $retries = 10
-          $delay = 5
-          $url = "http://localhost:8080/health"
-          
-          for ($i = 0; $i -lt $retries; $i++) {
-              try {
-                  $response = Invoke-WebRequest -Uri $url -ErrorAction Stop
-                  if ($response.Content -match "ok") {
-                      Write-Host "Service is ready"
-                      exit 0
-                  }
-              } catch {
-                  Write-Host "Waiting for service to be ready..."
-              }
-              Start-Sleep -Seconds $delay
-          }
-          Write-Host "Service did not become ready"
-          exit 1
 
       - name: Run Hurl Tests
         run: npm run test:integration
@@ -128,4 +119,3 @@ jobs:
         with:
           push: true
           tags: ${{ env.DOCKERHUB_REPO }}:${{ env.SHA_TAG }}, ${{ env.DOCKERHUB_REPO }}:main, ${{ env.DOCKERHUB_REPO }}:latest
-          
