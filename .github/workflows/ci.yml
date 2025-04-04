@@ -76,6 +76,8 @@ jobs:
           npm_global_path=$(npm config get prefix)
           echo "npm global prefix: $npm_global_path"
           export PATH=$npm_global_path/bin:$PATH
+          # Add /usr/local/lib/node_modules/hurl/bin to the PATH
+          export PATH=/usr/local/lib/node_modules/hurl/bin:$PATH
           echo "Updated PATH: $PATH"
           which hurl || echo "Hurl not found"
           hurl --version || echo "Hurl installation failed"
@@ -98,6 +100,8 @@ jobs:
         run: |
           # Re-export path and check again before running tests
           export PATH=$(npm config get prefix)/bin:$PATH
+          # Add /usr/local/lib/node_modules/hurl/bin to the PATH
+          export PATH=/usr/local/lib/node_modules/hurl/bin:$PATH
           echo "Final PATH: $PATH"
           which hurl || echo "Hurl not found before running tests"
           hurl --test --glob "tests/integration/**/*.hurl"
