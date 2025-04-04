@@ -1,5 +1,10 @@
+# .github/workflows/ci.yml
+
+# Continuous Integration (CI) Workflow
 name: ci
 
+# This workflow will run whenever we push commits to the `main` branch, or
+# whenever there's a pull request to the `main` branch.
 on:
   pull_request:
     branches:
@@ -69,27 +74,20 @@ jobs:
       - name: Install node dependencies
         run: npm install
 
-      - name: Install Hurl globally and ensure it's in path
-        run: |
-          sudo npm install -g hurl@0.2.7
-          # Get npm global path and include it in PATH explicitly
-          npm_global_path=$(npm config get prefix)
-          echo "npm global prefix: $npm_global_path"
-          export PATH=$npm_global_path/bin:$PATH
-          # Add /usr/local/lib/node_modules/hurl/bin to the PATH
-          export PATH=/usr/local/lib/node_modules/hurl/bin:$PATH
-          echo "Updated PATH: $PATH"
-          # Check Hurl installation
-          which hurl || echo "Hurl not found"
-          hurl --version || echo "Hurl installation failed"
-          
-      - name: Verify Hurl installation path
+      - name: Install Hurl globally
+        run: sudo npm install -g hurl@0.2.7
+
+      - name: Check if Hurl is installed and confirm its path
         run: |
           echo "Checking if Hurl is installed:"
           which hurl || echo "Hurl not found"
-          # If the command doesn't find hurl, attempt to list possible locations
+          # List contents of the expected directory where the executable should be
+          ls -l /usr/local/lib/node_modules/hurl/bin || echo "No binaries found in /usr/local/lib/node_modules/hurl/bin"
+          # If hurl isn't found, list possible locations
           echo "Listing locations where hurl might be installed"
           find / -name "hurl" 2>/dev/null
+          # Attempt to call Hurl using the full path if it's found
+          /usr/local/lib/node_modules/hurl/bin/hurl --version || echo "Hurl command failed"
 
       - name: Build Containers
         run: docker compose up -d
@@ -98,14 +96,7 @@ jobs:
         run: ./scripts/local-aws-setup.sh
 
       - name: Run Hurl Tests
-        run: |
-          # Re-export path and check again before running tests
-          export PATH=$(npm config get prefix)/bin:$PATH
-          # Add /usr/local/lib/node_modules/hurl/bin to the PATH
-          export PATH=/usr/local/lib/node_modules/hurl/bin:$PATH
-          echo "Final PATH: $PATH"
-          which hurl || echo "Hurl not found before running tests"
-          hurl --test --glob "tests/integration/**/*.hurl"
+        run: npm run test:integration
 
   docker-hub:
     name: Build and Push to Docker Hub
