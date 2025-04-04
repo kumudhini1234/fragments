@@ -30,14 +30,12 @@ jsonpath "$.fragment.size" == 23
 
 #Test 3 - POST fragment 2
 POST http://localhost:8080/v1/fragments
-# We're sending a JSON fragment
 Content-Type: text/markdown
-# Include HTTP Basic Auth credentials
 [BasicAuth]
 user1@email.com:password1
-
-
-DynamoDB is great.
+[FormParams]
+content: DynamoDB is great.
+content-type: text/markdown
 
 HTTP/1.1 201
 [Captures]
@@ -52,7 +50,7 @@ user1@email.com:password1
 HTTP/1.1 200
 Content-Type: application/json; charset=utf-8
 [Asserts]
-jsonpath "$.fragment.size" == 22
+jsonpath "$.fragment.size" == 59
 
 #Test 5 - GET all fragment IDs
 GET http://localhost:8080/v1/fragments
