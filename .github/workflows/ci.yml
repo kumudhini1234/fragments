@@ -1,10 +1,7 @@
 # .github/workflows/ci.yml
 
-# Continuous Integration (CI) Workflow
 name: ci
 
-# This workflow will run whenever we push commits to the `main` branch, or
-# whenever there's a pull request to the `main` branch.
 on:
   pull_request:
     branches:
@@ -78,11 +75,10 @@ jobs:
         run: |
           sudo npm install -g hurl@0.2.7
           npm_prefix=$(npm config get prefix)
-          echo "npm global prefix: $npm_prefix"
           export PATH=$npm_prefix/bin:$PATH
           echo "Updated PATH: $PATH"
-          which hurl
-          hurl --version
+          which hurl || echo "Hurl not found"
+          hurl --version || echo "Hurl installation failed"
 
       - name: Build Containers
         run: docker compose up -d
@@ -92,7 +88,9 @@ jobs:
 
       - name: Run Hurl Tests
         run: |
-          export PATH=$(npm config get prefix)/bin:$PATH  # Re-exporting the PATH in case it's lost in the step
+          # Re-export PATH to ensure Hurl is in the correct shell path
+          export PATH=$(npm config get prefix)/bin:$PATH
+          which hurl
           hurl --test --glob "tests/integration/**/*.hurl"
 
   docker-hub:
