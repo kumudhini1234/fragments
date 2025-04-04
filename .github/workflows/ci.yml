@@ -56,7 +56,8 @@ jobs:
       - name: Install node dependencies
         # NOTE: we need to install dev dependencies too vs. production only for hurl
         run: npm install
-      
+      - name: Install Hurl globally
+        run: npm install -g hurl@0.2.7  # Ensure correct version is installed
         
       - name: Build Containers
         run: docker compose up -d
