@@ -52,13 +52,12 @@ jobs:
           cache: 'npm'
       - run: npm install
 
-      - name: Install Hurl (Linux)
+      - name: Install Hurl
         run: |
           echo "Installing Hurl 6.1.1..."
-          curl -sSL https://github.com/Orange-OpenSource/hurl/releases/download/6.1.1/hurl-6.1.1-linux-x86_64.tar.gz -o hurl.tar.gz
-          tar xzf hurl.tar.gz
-          sudo install hurl-6.1.1/hurl /usr/local/bin/
-          rm -rf hurl.tar.gz hurl-6.1.1
+          curl -sSL https://github.com/Orange-OpenSource/hurl/releases/download/6.1.1/hurl-6.1.1-x86_64-linux.tar.gz -o hurl.tar.gz
+          tar -xzf hurl.tar.gz -C /usr/local/bin/ --strip-components=1 hurl-6.1.1/hurl
+          rm hurl.tar.gz
           hurl --version
 
       - name: Build Containers
@@ -67,7 +66,7 @@ jobs:
       - name: Setup Local AWS Resources
         run: ./scripts/local-aws-setup.sh
 
-      - name: Wait for services
+      - name: Wait for API readiness
         run: |
           for i in {1..10}; do
             if curl -s http://localhost:8080/health | grep -q "ok"; then
