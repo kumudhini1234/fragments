@@ -9,6 +9,9 @@ user1@email.com:password1
 { "service": "DynamoDB" }
 
 HTTP/1.1 201
+[Asserts]
+header "Location" exists  # Add this line
+jsonpath "$.status" == "ok"
 [Captures]
 fragment1_url: header "Location"
 fragment1_id: jsonpath "$.fragment.id"
