@@ -3,37 +3,33 @@
 # 1. POST a new JSON fragment
 POST http://localhost:8080/v1/fragments
 Content-Type: application/json
-[BasicAuth]
-user1@email.com:password1
+Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhc3N3b3JkMQ
 {
   "service": "DynamoDB"
 }
 
-# Verify response
 HTTP/1.1 201
 [Asserts]
 header "Location" exists
 jsonpath "$.status" == "ok"
-jsonpath "$.fragment.id" exists
 [Captures]
 fragment1_url: header "Location"
 fragment1_id: jsonpath "$.fragment.id"
 
 # 2. GET fragment metadata
 GET {{fragment1_url}}/info
-[BasicAuth]
-user1@email.com:password1
+Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhc3N3b3JkMQ
 
 HTTP/1.1 200
 [Asserts]
 jsonpath "$.status" == "ok"
 jsonpath "$.fragment.id" == {{fragment1_id}}
 
-# 3. POST Markdown fragment
+# 3. POST Markdown fragment (FIXED FORMAT)
 POST http://localhost:8080/v1/fragments
 Content-Type: text/markdown
-[BasicAuth]
-user1@email.com:password1
+Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhc3N3b3JkMQ
+
 DynamoDB is **great**.
 
 HTTP/1.1 201
@@ -42,6 +38,8 @@ header "Location" exists
 [Captures]
 fragment2_url: header "Location"
 fragment2_id: jsonpath "$.fragment.id"
+
+# ... rest of your test cases ...
 
 
 
