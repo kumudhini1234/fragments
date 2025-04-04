@@ -35,7 +35,7 @@ Content-Type: text/markdown
 [BasicAuth]
 user1@email.com:password1
 #Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhc3N3b3JkMQ==
-`DynamoDB is **great**.`
+DynamoDB is **great**.
 
 HTTP/1.1 201
 [Captures]
