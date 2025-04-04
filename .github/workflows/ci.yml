@@ -91,7 +91,9 @@ jobs:
         run: ./scripts/local-aws-setup.sh
 
       - name: Run Hurl Tests
-        run: npm run test:integration
+        run: |
+          export PATH=$(npm config get prefix)/bin:$PATH  # Re-exporting the PATH in case it's lost in the step
+          hurl --test --glob "tests/integration/**/*.hurl"
 
   docker-hub:
     name: Build and Push to Docker Hub
