@@ -1,5 +1,3 @@
-# .github/workflows/ci.yml
-
 name: ci
 
 on:
@@ -75,10 +73,17 @@ jobs:
         run: |
           sudo npm install -g hurl@0.2.7
           npm_prefix=$(npm config get prefix)
+          echo "npm prefix: $npm_prefix"
           export PATH=$npm_prefix/bin:$PATH
           echo "Updated PATH: $PATH"
           which hurl || echo "Hurl not found"
           hurl --version || echo "Hurl installation failed"
+          
+      - name: Verify Hurl installation path
+        run: |
+          echo "Checking if Hurl is installed:"
+          which hurl
+          ls -l $(which hurl)
 
       - name: Build Containers
         run: docker compose up -d
@@ -88,9 +93,10 @@ jobs:
 
       - name: Run Hurl Tests
         run: |
-          # Re-export PATH to ensure Hurl is in the correct shell path
+          # Ensure hurl is in the correct path again before running
           export PATH=$(npm config get prefix)/bin:$PATH
-          which hurl
+          echo "Final PATH: $PATH"
+          which hurl || echo "Hurl not found before running tests"
           hurl --test --glob "tests/integration/**/*.hurl"
 
   docker-hub:
