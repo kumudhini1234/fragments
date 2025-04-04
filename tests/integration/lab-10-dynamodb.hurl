@@ -27,7 +27,7 @@ jsonpath "$.fragment.ownerId" matches "^[0-9a-fA-F]+$"
 jsonpath "$.fragment.created" isString
 jsonpath "$.fragment.updated" isString
 jsonpath "$.fragment.type" == "application/json"
-jsonpath "$.fragment.size" == 27
+jsonpath "$.fragment.size" == 29
 # Capture the Location URL into a variable named `url`
 [Captures]
 fragment1_url: header "Location"
@@ -45,7 +45,7 @@ jsonpath "$.fragment.id" == {{fragment1_id}}
 jsonpath "$.fragment.ownerId" matches "^[0-9a-fA-F]+$"
 jsonpath "$.fragment.created" isString
 jsonpath "$.fragment.updated" isString
-jsonpath "$.fragment.size" == 27
+jsonpath "$.fragment.size" == 29
 jsonpath "$.fragment.type" == "application/json"
 
 POST http://localhost:8080/v1/fragments
