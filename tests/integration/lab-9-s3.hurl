@@ -5,7 +5,8 @@ POST http://localhost:8080/v1/fragments
 Content-Type: text/plain
 [BasicAuth]
 user1@email.com:password1
-Hello S3!
+
+`Hello S3!`
 
 HTTP/1.1 201
 [Captures]
@@ -19,7 +20,7 @@ user1@email.com:password1
 
 HTTP/1.1 200
 [Asserts]
-jsonpath "$.fragment.size" == 9  # Length of "Hello S3!"
+jsonpath "$.fragment.size" == 9
 jsonpath "$.fragment.type" == "text/plain"
 
 # 3. POST a second fragment (JSON)
@@ -27,6 +28,7 @@ POST http://localhost:8080/v1/fragments
 Content-Type: application/json
 [BasicAuth]
 user1@email.com:password1
+
 {"service": "S3"}
 
 HTTP/1.1 201
