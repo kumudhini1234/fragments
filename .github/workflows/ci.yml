@@ -56,9 +56,7 @@ jobs:
       - name: Install node dependencies
         # NOTE: we need to install dev dependencies too vs. production only for hurl
         run: npm install
-      # Install Hurl globally
-      - name: Install Hurl
-        run: npm install -g hurl@0.2.7
+      
         
       - name: Build Containers
         run: docker compose up -d
@@ -67,7 +65,7 @@ jobs:
         # $ chmod +x ./scripts/local-aws-setup.sh
         run: ./scripts/local-aws-setup.sh
       - name: Run Hurl Tests
-        run: npm run test:integration
+        run: npx hurl --test --glob "tests/integration/**/*.hurl"
 
     # Lint our Dockerfile using Hadolint
   dockerfile-lint:
