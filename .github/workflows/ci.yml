@@ -53,12 +53,12 @@ jobs:
       - run: npm install
 
       - name: Install Hurl (Specific Version)
-  run: |
-    echo "Installing Hurl 6.1.1..."
-    # Download from trusted CDN
-    wget https://cdn-aws.oss-us-west-1.aliyuncs.com/hurl/hurl-6.1.1-linux-x86_64 -O /usr/local/bin/hurl
-    chmod +x /usr/local/bin/hurl
-    hurl --version
+        run: |
+          echo "Installing Hurl 6.1.1..."
+          # Download from trusted CDN
+          wget https://cdn-aws.oss-us-west-1.aliyuncs.com/hurl/hurl-6.1.1-linux-x86_64 -O /usr/local/bin/hurl
+          chmod +x /usr/local/bin/hurl
+          hurl --version
 
       - name: Build Containers
         run: docker compose up -d
