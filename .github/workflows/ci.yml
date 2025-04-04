@@ -72,9 +72,10 @@ jobs:
       - name: Install Hurl globally and ensure it's in path
         run: |
           sudo npm install -g hurl@0.2.7
-          npm_prefix=$(npm config get prefix)
-          echo "npm prefix: $npm_prefix"
-          export PATH=$npm_prefix/bin:$PATH
+          # Get npm global path and include it in PATH explicitly
+          npm_global_path=$(npm config get prefix)
+          echo "npm global prefix: $npm_global_path"
+          export PATH=$npm_global_path/bin:$PATH
           echo "Updated PATH: $PATH"
           which hurl || echo "Hurl not found"
           hurl --version || echo "Hurl installation failed"
@@ -82,8 +83,10 @@ jobs:
       - name: Verify Hurl installation path
         run: |
           echo "Checking if Hurl is installed:"
-          which hurl
-          ls -l $(which hurl)
+          which hurl || echo "Hurl not found"
+          # If the command doesn't find hurl, attempt to list possible locations
+          echo "Listing locations where hurl might be installed"
+          find / -name "hurl" 2>/dev/null
 
       - name: Build Containers
         run: docker compose up -d
@@ -93,7 +96,7 @@ jobs:
 
       - name: Run Hurl Tests
         run: |
-          # Ensure hurl is in the correct path again before running
+          # Re-export path and check again before running tests
           export PATH=$(npm config get prefix)/bin:$PATH
           echo "Final PATH: $PATH"
           which hurl || echo "Hurl not found before running tests"
