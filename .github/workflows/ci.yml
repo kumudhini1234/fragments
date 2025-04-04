@@ -74,20 +74,16 @@ jobs:
       - name: Install node dependencies
         run: npm install
 
-      - name: Install Hurl globally
-        run: sudo npm install -g hurl@0.2.7
-
-      - name: Check if Hurl is installed and confirm its path
+      - name: Install Hurl
         run: |
-          echo "Checking if Hurl is installed:"
-          which hurl || echo "Hurl not found"
-          # List contents of the expected directory where the executable should be
-          ls -l /usr/local/lib/node_modules/hurl/bin || echo "No binaries found in /usr/local/lib/node_modules/hurl/bin"
-          # If hurl isn't found, list possible locations
-          echo "Listing locations where hurl might be installed"
-          find / -name "hurl" 2>/dev/null
-          # Attempt to call Hurl using the full path if it's found
-          /usr/local/lib/node_modules/hurl/bin/hurl --version || echo "Hurl command failed"
+          sudo npm install -g hurl@0.2.7
+          # Add Hurl to PATH
+          echo "Adding Hurl to PATH"
+          echo "$(npm root -g)/hurl/bin" >> $GITHUB_PATH
+
+      - name: Verify Hurl installation
+        run: |
+          hurl --version
 
       - name: Build Containers
         run: docker compose up -d
@@ -119,4 +115,26 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: ${{ env.DOCKERHUB_REPO }}:${{ env.SHA_TAG }}, ${{ env.DOCKERHUB_REPO }}:main, ${{ env.DOCKERHUB_REPO }}:latest
+          tags: ${{ env.DOCKERHUB_REPO }}:${{ env.SHA_TAG }}, ${{ env.DOCKERHUB_REPO }}:main, ${{ env.DOCKERHUB_REPO }}:latest- name: Run ESLint
+  run: npm run lint
+  env:
+    LOG_LEVEL: debug
+  continue-on-error: true
+
+- name: Run Hurl Tests
+  run: npm run test:integration
+  env:
+    LOG_LEVEL: debug
+  continue-on-error: true
+
+- name: Build Containers
+  run: docker compose up -d
+  env:
+    COMPOSE_LOG_LEVEL: DEBUG
+  continue-on-error: true
+
+- name: Setup Local AWS Resources
+  run: ./scripts/local-aws-setup.sh
+  env:
+    LOG_LEVEL: debug
+  continue-on-error: true
