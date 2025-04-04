@@ -1,115 +1,130 @@
-# tests.integration.lab-9-s3.hurl
-# 1. Post a new JSON fragment
+# tests/integration/lab-10-DynamoDB.hurl
+# Authenticated POST to /v1/fragments
 POST http://localhost:8080/v1/fragments
+# We're sending a plain text fragment
 Content-Type: application/json
+# Include HTTP Basic Auth credentials
 [BasicAuth]
 user1@email.com:password1
-#Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhc3N3b3JkMQ==
-{ "service": "DynamoDB" }
+# Body of the request goes in ```...``` when it's a string
+{
+  "service": "DynamoDB"
+}
 
+# 1. We expect to get back an HTTP 201
 HTTP/1.1 201
+# We have various assertions about the response that we want to check
+[Asserts]
+# The Location header should look like what we expect (including the fragment id)
+header "Location" matches "^http:\/\/localhost:8080\/v1\/fragments\/[A-Za-z0-9_-]+$"
+jsonpath "$.status" == "ok"
+# Our fragment ids use UUIDs, see https://ihateregex.io/expr/uuid/
+jsonpath "$.fragment.id" matches "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+# Our ownerId hash is a hex encoded string
+jsonpath "$.fragment.ownerId" matches "^[0-9a-fA-F]+$"
+# Basic check for the presence of created and updated date strings.
+# You could also write a regex for this and use matches
+jsonpath "$.fragment.created" isString
+jsonpath "$.fragment.updated" isString
+jsonpath "$.fragment.type" == "application/json"
+jsonpath "$.fragment.size" == 27
+# Capture the Location URL into a variable named `url`
 [Captures]
 fragment1_url: header "Location"
 fragment1_id: jsonpath "$.fragment.id"
 
-# GET fragment info
+# 2. Try to GET the fragment info we just posted by its URL
 GET {{fragment1_url}}/info
 [BasicAuth]
 user1@email.com:password1
-#Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhc3N3b3JkMQ==
 
 HTTP/1.1 200
+Content-Type: application/json; charset=utf-8
 [Asserts]
-jsonpath "$.status" == "ok"
-jsonpath "$.fragment.id" matches /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/
-jsonpath "$.fragment.ownerId" matches /^[0-9a-fA-F]+$/
+jsonpath "$.fragment.id" == {{fragment1_id}}
+jsonpath "$.fragment.ownerId" matches "^[0-9a-fA-F]+$"
 jsonpath "$.fragment.created" isString
 jsonpath "$.fragment.updated" isString
+jsonpath "$.fragment.size" == 27
 jsonpath "$.fragment.type" == "application/json"
-# 19 is the length of our fragment data: 'This is a fragment!'
-jsonpath "$.fragment.size" == 25
 
-# POST 2nd fragment
 POST http://localhost:8080/v1/fragments
+# We're sending a markdown text fragment
 Content-Type: text/markdown
+# Include HTTP Basic Auth credentials
 [BasicAuth]
 user1@email.com:password1
-#Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhc3N3b3JkMQ==
-DynamoDB is **great**.
+# Body of the request goes in ```...``` when it's a string
+`DynamoDB is **great**.`
 
+# 1. We expect to get back an HTTP 201
 HTTP/1.1 201
+# We have various assertions about the response that we want to check
+[Asserts]
+# The Location header should look like what we expect (including the fragment id)
+header "Location" matches "^http:\/\/localhost:8080\/v1\/fragments\/[A-Za-z0-9_-]+$"
+jsonpath "$.status" == "ok"
+# Our fragment ids use UUIDs, see https://ihateregex.io/expr/uuid/
+jsonpath "$.fragment.id" matches "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+# Our ownerId hash is a hex encoded string
+jsonpath "$.fragment.ownerId" matches "^[0-9a-fA-F]+$"
+# Basic check for the presence of created and updated date strings.
+# You could also write a regex for this and use matches
+jsonpath "$.fragment.created" isString
+jsonpath "$.fragment.updated" isString
+jsonpath "$.fragment.type" == "text/markdown"
+jsonpath "$.fragment.size" == 22
+# Capture the Location URL into a variable named `url`
 [Captures]
 fragment2_url: header "Location"
 fragment2_id: jsonpath "$.fragment.id"
 
-
-# GET fragment2 info
+# 2. Try to GET the fragment info we just posted by its URL
 GET {{fragment2_url}}/info
 [BasicAuth]
 user1@email.com:password1
-#Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhc3N3b3JkMQ==
 
 HTTP/1.1 200
+Content-Type: application/json; charset=utf-8
 [Asserts]
-jsonpath "$.status" == "ok"
-jsonpath "$.fragment.id" matches /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/
-jsonpath "$.fragment.ownerId" matches /^[0-9a-fA-F]+$/
+jsonpath "$.fragment.id" == {{fragment2_id}}
+jsonpath "$.fragment.ownerId" matches "^[0-9a-fA-F]+$"
 jsonpath "$.fragment.created" isString
 jsonpath "$.fragment.updated" isString
+jsonpath "$.fragment.size" == 22
 jsonpath "$.fragment.type" == "text/markdown"
 
-# GET Fragments
-# Make a GET request to get all the fragmenta
+# 2. Try to GET all the fragments without expanding
 GET http://localhost:8080/v1/fragments
-# Include authorization header
 [BasicAuth]
 user1@email.com:password1
 
-# Make sure it returns the expected values
-# Status code 200
 HTTP/1.1 200
+Content-Type: application/json; charset=utf-8
 
 [Asserts]
-jsonpath "$.fragments" isCollection
 jsonpath "$.fragments" includes {{fragment1_id}}
 jsonpath "$.fragments" includes {{fragment2_id}}
 
-# DELETE Fragments
-
-# Make a DELETE request
+# 2. Try to DELETE the fragment we just posted by its URL
 DELETE {{fragment1_url}}
-# Include authorization header
 [BasicAuth]
 user1@email.com:password1
 
-# Make sure it returns the expected values
-# Status code 200
 HTTP/1.1 200
 
-# GET Fragments
-
-# Make a GET request to get all the fragmenta
 GET {{fragment1_url}}
-# Include authorization header
 [BasicAuth]
 user1@email.com:password1
 
-# Make sure it returns the expected values
-# Status code 404
 HTTP/1.1 404
 
-# GET Fragments
-
-# Make a GET request to get all the fragmenta
 GET http://localhost:8080/v1/fragments
-# Include authorization header
 [BasicAuth]
 user1@email.com:password1
 
-# Make sure it returns the expected values
-# Status code 200
 HTTP/1.1 200
-
+Content-Type: application/json; charset=utf-8
 [Asserts]
 jsonpath "$.fragments" not includes {{fragment1_id}}
 jsonpath "$.fragments" includes {{fragment2_id}}
