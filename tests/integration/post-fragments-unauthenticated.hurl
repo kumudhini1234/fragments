@@ -7,7 +7,7 @@ Content-Type: text/plain
 [BasicAuth]
 incorrect@username.com:incorrectpassword1
 # Body of the request goes in ```...``` when it's a string
-```This is a fragment!```
+`This is a fragment!`
 
 # Should return 401 error when unauthenitcated
 HTTP/1.1 401
