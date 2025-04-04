@@ -7,7 +7,7 @@ Content-Type: text/plain
 [BasicAuth]
 user1@email.com:password1
 # Body of the request goes in ```...``` when it's a string
-```This is a fragment!```
+`This is a fragment!`
 
 # We expect to get back an HTTP 201
 HTTP/1.1 201
