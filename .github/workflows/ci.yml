@@ -74,10 +74,18 @@ jobs:
       - name: Install Hurl
         run: |
           # Download and install Hurl directly from GitHub releases
-          curl -LO https://github.com/Orange-OpenSource/hurl/releases/download/0.2.7/hurl-0.2.7-x86_64-linux.tar.gz
-          tar xvzf hurl-0.2.7-x86_64-linux.tar.gz
-          sudo mv hurl-0.2.7/hurl /usr/local/bin/
-          rm -rf hurl-0.2.7*
+          echo "Downloading Hurl..."
+          curl -sSL https://github.com/Orange-OpenSource/hurl/releases/download/1.6.1/hurl-1.6.1-x86_64-linux.tar.gz -o hurl.tar.gz
+          
+          echo "Verifying download..."
+          file hurl.tar.gz | grep 'gzip compressed data' || (echo "Download failed - not a valid gzip file"; exit 1)
+          
+          echo "Installing Hurl..."
+          tar xvzf hurl.tar.gz
+          sudo mv hurl-1.6.1/hurl /usr/local/bin/
+          rm -rf hurl.tar.gz hurl-1.6.1
+          
+          echo "Verifying installation..."
           hurl --version
 
       - name: Build Containers
