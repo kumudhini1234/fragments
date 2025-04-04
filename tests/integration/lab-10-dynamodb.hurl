@@ -35,6 +35,8 @@ Content-Type: text/markdown
 # Include HTTP Basic Auth credentials
 [BasicAuth]
 user1@email.com:password1
+
+
 `DynamoDB is **great**.`
 
 HTTP/1.1 201
