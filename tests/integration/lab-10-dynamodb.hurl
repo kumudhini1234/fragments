@@ -5,10 +5,15 @@ POST http://localhost:8080/v1/fragments
 Content-Type: application/json
 [BasicAuth]
 user1@email.com:password1
-{ "service": "DynamoDB" }
+{
+  "service": "DynamoDB"
+}
 
-# Expected Response
+# Verify the response contains the expected Location header
 HTTP/1.1 201
+Content-Type: application/json
+[Asserts]
+header "Location" exists
 [Captures]
 fragment1_url: header "Location"
 fragment1_id: jsonpath "$.fragment.id"

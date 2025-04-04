@@ -1,14 +1,16 @@
 # 1. Posting a text fragment to /v1/fragments
+# Example corrected S3 test format
 POST http://localhost:8080/v1/fragments
 Content-Type: text/plain
 [BasicAuth]
 user1@email.com:password1
-`Hello S3!`
+[Body]
+Hello S3!
 
 # Expected Response
 HTTP/1.1 201
 [Captures]
-url: header "Location"
+fragment_url: header "Location"
 
 
 # 2. Get the fragment
