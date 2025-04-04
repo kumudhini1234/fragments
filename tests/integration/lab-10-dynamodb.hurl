@@ -37,7 +37,7 @@ Content-Type: text/markdown
 user1@email.com:password1
 
 
-`DynamoDB is **great**.`
+DynamoDB is great.
 
 HTTP/1.1 201
 [Captures]
