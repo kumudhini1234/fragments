@@ -4,8 +4,6 @@
 # Assumes aws cli is installed and LocalStack and DynamoDB local are running.
 
 # Setup AWS environment variables
-# Make script executable
-
 echo "Setting AWS environment variables for LocalStack"
 
 echo "AWS_ACCESS_KEY_ID=test"

@@ -4,38 +4,43 @@ FROM node:20-alpine AS builder
 LABEL maintainer="Kumudhini Reddicherla <kreddicherla@myseneca.ca>"
 LABEL description="Fragments node.js microservice"
 
-# Set environment variables
 ENV PORT=8080 \
     NODE_ENV=production \
     NPM_CONFIG_LOGLEVEL=warn \
     NPM_CONFIG_COLOR=false
 
-# Set working directory
 WORKDIR /app
 
-# Copy package files and install only production dependencies
 COPY package*.json ./
 RUN npm ci --only=production
 
-# Copy the application source code
 COPY ./src ./src
 COPY ./tests/.htpasswd ./tests/.htpasswd
 
 # Stage 2: Create a minimal production image
 FROM node:20-alpine
 
-# Set environment variables
 ENV PORT=8080 \
     NODE_ENV=production
 
-# Set working directory
 WORKDIR /app
 
-# Copy dependencies from builder stage
+# ✅ Install aws-cli directly using apk
+RUN apk add --no-cache curl aws-cli
+
 COPY --from=builder /app .
 
-# Expose the application port
 EXPOSE 8080
 
-# Start the server
-CMD ["npm", "start"]
+CMD sh -c "\
+  echo 'Waiting for AWS services to be ready...' && \
+  sleep 10 && \
+  echo 'Setting up local AWS resources...' && \
+  aws --endpoint-url=http://dynamodb-local:8000 dynamodb create-table \
+    --table-name fragments \
+    --attribute-definitions AttributeName=ownerId,AttributeType=S AttributeName=id,AttributeType=S \
+    --key-schema AttributeName=ownerId,KeyType=HASH AttributeName=id,KeyType=RANGE \
+    --billing-mode PAY_PER_REQUEST && \
+  aws --endpoint-url=http://localstack:4566 s3api create-bucket --bucket kreddicherla-fragments && \
+  echo 'All set. Starting app now...' && \
+  npm start"
