@@ -88,7 +88,7 @@ jobs:
         run: |
           echo "Waiting for localhost:8080 to be ready..."
           for i in {1..30}; do
-            if curl -s http://localhost:8080/health | grep -q "ok"; then
+            if curl -s -o /dev/null -w "%{http_code}" http://localhost:8080 | grep -q "200"; then
               echo "Server is up!"
               exit 0
             else

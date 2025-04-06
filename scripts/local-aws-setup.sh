@@ -42,7 +42,7 @@ dynamodb create-table \
         AttributeName=ownerId,KeyType=HASH \
         AttributeName=id,KeyType=RANGE \
     --provisioned-throughput \
-        ReadCapacityUnits=10,WriteCapacityUnits=5
+        ReadCapacityUnits=10,WriteCapacityUnits=5 || true
 
 # Wait until the Fragments table exists in dynamodb-local, so we can use it, see:
 # https://awscli.amazonaws.com/v2/documentation/api/latest/reference/dynamodb/wait/table-exists.html
