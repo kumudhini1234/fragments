@@ -57,37 +57,49 @@ jobs:
         run: npm install-ci-test
 
   integration-tests:
-    name: Integration Tests
-    runs-on: ubuntu-latest
-    env:
-      AWS_ACCESS_KEY_ID: test
-      AWS_SECRET_ACCESS_KEY: test
-      AWS_REGION: us-east-1
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
+  name: Integration Tests
+  runs-on: ubuntu-latest
+  env:
+    AWS_ACCESS_KEY_ID: test
+    AWS_SECRET_ACCESS_KEY: test
+    AWS_REGION: us-east-1
+  steps:
+    - name: Check out code
+      uses: actions/checkout@v4
 
-      - name: Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 'lts/*'
-          cache: 'npm'
+    - name: Setup node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 'lts/*'
+        cache: 'npm'
 
-      - name: Install node dependencies
-        run: npm install
+    - name: Install node dependencies
+      run: npm install
 
-      - name: Build Containers
-        run: docker compose up -d
+    - name: Build Containers
+      run: docker compose up -d
 
-      - name: Setup Local AWS Resources
-        run: |
-          chmod +x ./scripts/local-aws-setup.sh
-          ./scripts/local-aws-setup.sh
+    - name: Setup Local AWS Resources
+      run: |
+        chmod +x ./scripts/local-aws-setup.sh
+        ./scripts/local-aws-setup.sh
 
-      
+    - name: Wait for the server to be ready (port 8080 check)
+      run: |
+        echo "Waiting for localhost:8080 to be ready..."
+        for i in {1..60}; do  # Increased the number of retries to 60
+          if nc -z localhost 8080; then
+            echo "✅ Server is ready!"
+            exit 0
+          fi
+          echo "Still waiting... ($i)"
+          sleep 10  # Increased sleep time to 10 seconds
+        done
+        echo "❌ Server failed to start within expected time."
+        exit 1
 
-      - name: Run Hurl Tests
-        run: npm run test:integration
+    - name: Run Hurl Tests
+      run: npm run test:integration
 
   docker-hub:
     name: Build and Push to Docker Hub
