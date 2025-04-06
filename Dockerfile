@@ -46,4 +46,4 @@ CMD ["sh", "-c", \
     --billing-mode PAY_PER_REQUEST && \
   aws --endpoint-url=http://localstack:4566 s3api create-bucket --bucket kreddicherla-fragments && \
   echo 'All set. Starting app now...' && \
-  npm start"]
+  npm start"]   
