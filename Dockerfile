@@ -25,15 +25,15 @@ ENV PORT=8080 \
 
 WORKDIR /app
 
-# ✅ Install aws-cli directly using apk
-RUN apk add --no-cache curl aws-cli
+# ✅ Install aws-cli and curl with version pinning to avoid conflicts
+RUN apk add --no-cache curl=7.85.0-r0 aws-cli=1.22.24-r0
 
 COPY --from=builder /app .
 
 EXPOSE 8080
 
-CMD sh -c "\
-  echo 'Waiting for AWS services to be ready...' && \
+# ✅ Use JSON notation for CMD to avoid warning DL3025
+CMD ["sh", "-c", "echo 'Waiting for AWS services to be ready...' && \
   sleep 10 && \
   echo 'Setting up local AWS resources...' && \
   aws --endpoint-url=http://dynamodb-local:8000 dynamodb create-table \
@@ -43,4 +43,4 @@ CMD sh -c "\
     --billing-mode PAY_PER_REQUEST && \
   aws --endpoint-url=http://localstack:4566 s3api create-bucket --bucket kreddicherla-fragments && \
   echo 'All set. Starting app now...' && \
-  npm start"
+  npm start"]
