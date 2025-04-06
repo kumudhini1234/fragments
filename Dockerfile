@@ -25,15 +25,16 @@ ENV PORT=8080 \
 
 WORKDIR /app
 
-# ✅ Install aws-cli and curl with version pinning to avoid conflicts
-RUN apk add --no-cache curl=7.85.0-r0 aws-cli=1.22.24-r0
+# ✅ Install aws-cli with version pinning
+RUN apk add --no-cache curl=8.12.1-r1 aws-cli=2.22.10-r0
 
 COPY --from=builder /app .
 
 EXPOSE 8080
 
-# ✅ Use JSON notation for CMD to avoid warning DL3025
-CMD ["sh", "-c", "echo 'Waiting for AWS services to be ready...' && \
+# ✅ Use JSON array format for CMD
+CMD ["sh", "-c", \
+  "echo 'Waiting for AWS services to be ready...' && \
   sleep 10 && \
   echo 'Setting up local AWS resources...' && \
   aws --endpoint-url=http://dynamodb-local:8000 dynamodb create-table \
