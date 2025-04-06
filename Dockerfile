@@ -25,6 +25,8 @@ ENV PORT=8080 \
 
 WORKDIR /app
 
+
+
 # ✅ Install aws-cli with version pinning
 RUN apk add --no-cache curl=8.12.1-r1 aws-cli=2.22.10-r0
 
