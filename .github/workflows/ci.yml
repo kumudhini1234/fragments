@@ -84,22 +84,7 @@ jobs:
           chmod +x ./scripts/local-aws-setup.sh
           ./scripts/local-aws-setup.sh
 
-      - name: Wait for server to be ready
-        run: |
-          echo "Waiting for localhost:8080 to be ready..."
-          for i in {1..30}; do
-            if curl -s -o /dev/null -w "%{http_code}" http://localhost:8080 | grep -q "200"; then
-              echo "Server is up!"
-              exit 0
-            else
-              echo "Still waiting... ($i)"
-              sleep 2
-            fi
-          done
-          echo "Server failed to start within expected time."
-          echo "Printing docker logs:"
-          docker compose logs
-          exit 1
+      
 
       - name: Run Hurl Tests
         run: npm run test:integration
