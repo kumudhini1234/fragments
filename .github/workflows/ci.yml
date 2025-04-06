@@ -52,13 +52,17 @@ jobs:
           cache: 'npm'
       - run: npm install
 
-      - name: Install Hurl
+      - name: Install Hurl (Linux)
         run: |
+          # Install specific version that matches your Windows version (6.1.1)
+          echo "Installing Hurl 6.1.1 for Linux..."
           sudo apt-get update
           sudo apt-get install -y wget
-          wget https://github.com/Orange-OpenSource/hurl/releases/download/6.1.1/hurl_6.1.1_linux_x86_64.deb
-          sudo dpkg -i hurl_6.1.1_linux_x86_64.deb || sudo apt-get install -f -y
-          rm hurl_6.1.1_linux_x86_64.deb
+          wget https://github.com/Orange-OpenSource/hurl/releases/download/6.1.1/hurl-6.1.1-x86_64-linux.tar.gz
+          tar -xzf hurl-6.1.1-x86_64-linux.tar.gz
+          sudo install hurl-6.1.1/hurl /usr/local/bin/
+          sudo install hurl-6.1.1/hurlfmt /usr/local/bin/
+          rm -rf hurl-6.1.1*
           hurl --version
 
       - name: Build Containers
