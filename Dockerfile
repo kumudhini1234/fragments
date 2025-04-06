@@ -37,7 +37,7 @@ EXPOSE 8080
 # ✅ Use JSON array format for CMD
 CMD ["sh", "-c", \
   "echo 'Waiting for AWS services to be ready...' && \
-  sleep 10 && \
+  sleep 30 && \
   echo 'Setting up local AWS resources...' && \
   aws --endpoint-url=http://dynamodb-local:8000 dynamodb create-table \
     --table-name fragments \
