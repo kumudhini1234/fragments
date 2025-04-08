@@ -87,10 +87,9 @@ jobs:
       - name: Wait for the server to be ready (port 8080 check)
         run: |
           echo "Waiting for localhost:8080 to be ready..."
-          for i in {1..60}; do  # Increased the number of retries to 60
+          for i in {1..600}; do  # Increased the number of retries to 60
             if nc -z localhost 8080; then
               echo "✅ Server is ready!"
-              npm run test:integration
               exit 0
             fi
             echo "Still waiting... ($i)"
@@ -99,8 +98,8 @@ jobs:
           echo "❌ Server failed to start within expected time."
           exit 1
 
-      # - name: Run Hurl Tests
-      #   run: npm run test:integration
+      - name: Run Hurl Tests
+        run: npm run test:integration
 
   docker-hub:
     name: Build and Push to Docker Hub
@@ -123,4 +122,4 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: ${{ env.DOCKERHUB_REPO }}:${{ env.SHA_TAG }}, ${{ env.DOCKERHUB_REPO }}:main, ${{ env.DOCKERHUB_REPO }}:latest  
+          tags: ${{ env.DOCKERHUB_REPO }}:${{ env.SHA_TAG }}, ${{ env.DOCKERHUB_REPO }}:main, ${{ env.DOCKERHUB_REPO }}:latest
