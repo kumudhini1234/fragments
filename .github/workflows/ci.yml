@@ -87,9 +87,10 @@ jobs:
       - name: Wait for the server to be ready (port 8080 check)
         run: |
           echo "Waiting for localhost:8080 to be ready..."
-          for i in {1..600}; do  # Increased the number of retries to 60
+          for i in {1..60}; do  # Increased the number of retries to 60
             if nc -z localhost 8080; then
               echo "✅ Server is ready!"
+              sleep 300
               exit 0
             fi
             echo "Still waiting... ($i)"
@@ -100,6 +101,7 @@ jobs:
 
       - name: Run Hurl Tests
         run: npm run test:integration
+
 
   docker-hub:
     name: Build and Push to Docker Hub
