@@ -1,71 +1,49 @@
 # tests/integration/lab-9-s3.hurl
 
-# 1. POST a new text fragment
+# 1. Posting a text fragment to /v1/fragments
 POST http://localhost:8080/v1/fragments
 Content-Type: text/plain
 [BasicAuth]
 user1@email.com:password1
-
 `Hello S3!`
 
+# Expected Response
 HTTP/1.1 201
 [Captures]
-fragment1_url: header "Location"
-fragment1_id: jsonpath "$.fragment.id"
+url: header "Location"
 
-# 2. GET fragment info
-GET {{fragment1_url}}/info
+
+# 2. Get the fragment
+GET {{url}}
 [BasicAuth]
 user1@email.com:password1
 
+# Expected Response
 HTTP/1.1 200
+Content-Type: text/plain
 [Asserts]
-jsonpath "$.fragment.size" == 9
-jsonpath "$.fragment.type" == "text/plain"
+body == "Hello S3!"
 
-# 3. POST a second fragment (JSON)
-POST http://localhost:8080/v1/fragments
-Content-Type: application/json
+
+# 3. Delete the fragment
+DELETE {{url}}
 [BasicAuth]
 user1@email.com:password1
 
-{"service": "S3"}
-
-HTTP/1.1 201
-[Captures]
-fragment2_url: header "Location"
-fragment2_id: jsonpath "$.fragment.id"
-
-# 4. GET all fragments
-GET http://localhost:8080/v1/fragments
-[BasicAuth]
-user1@email.com:password1
-
-HTTP/1.1 200
-[Asserts]
-jsonpath "$.fragments" contains "{{fragment1_id}}"
-jsonpath "$.fragments" contains "{{fragment2_id}}"
-
-# 5. DELETE first fragment
-DELETE {{fragment1_url}}
-[BasicAuth]
-user1@email.com:password1
-
+# Expected Response
 HTTP/1.1 200
 
-# 6. Verify deletion
-GET {{fragment1_url}}
+
+# 4. Send a get request to confirm fragment not found
+GET {{url}}
 [BasicAuth]
 user1@email.com:password1
 
+# Expected Response
 HTTP/1.1 404
-
-# 7. Verify fragment list after deletion
-GET http://localhost:8080/v1/fragments
-[BasicAuth]
-user1@email.com:password1
-
-HTTP/1.1 200
 [Asserts]
-jsonpath "$.fragments" not contains "{{fragment1_id}}"
-jsonpath "$.fragments" contains "{{fragment2_id}}"
+jsonpath "$.status" == "error"
+jsonpath "$.error.code" == 404
+jsonpath "$.error.message" == "Fragment by id not found"
+
+

@@ -7,8 +7,7 @@ const logger = require('../../logger');
  * Get a list of fragments for the current user
  */
 module.exports = async (req, res) => {
-  const expand = req.query.expand === '1';
-  console.log('I am here')
+  const expand = req.query.expand === '1'; // Check if expand query parameter is present and equals '1'
   try {
     const fragments = await Fragment.byUser(req.user, expand);
     res.status(200).json(createSuccessResponse({ fragments }));

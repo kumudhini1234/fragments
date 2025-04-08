@@ -14,7 +14,7 @@ HTTP/1.1 201
 # We have various assertions about the response that we want to check
 [Asserts]
 # The Location header should look like what we expect (including the fragment id)
-header "Location" matches "^http:\/\/localhost:8080\/v1\/fragments\/[A-Za-z0-9_-]+$"
+header "Location" matches "^http:\/\/localhost:8080\/v1\/fragments\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
 jsonpath "$.status" == "ok"
 # Our fragment ids use UUIDs, see https://ihateregex.io/expr/uuid/
 jsonpath "$.fragment.id" matches "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
@@ -27,7 +27,6 @@ jsonpath "$.fragment.updated" isString
 jsonpath "$.fragment.type" == "text/plain"
 # 19 is the length of our fragment data: 'This is a fragment!'
 jsonpath "$.fragment.size" == 19
-
 # Capture the Location URL into a variable named `url`
 [Captures]
 url: header "Location"

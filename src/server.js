@@ -9,21 +9,15 @@ const logger = require('./logger');
 // Get our express app instance
 const app = require('./app');
 
-// Get the desired port from the process' environment. Default to 8080
-// eslint-disable-next-line no-undef
+// Get the desired port from the process' environment. Default to `8080`
 const port = parseInt(process.env.PORT || '8080', 10);
-
-// Log all environment variables if LOG_LEVEL is set to 'debug'
-// eslint-disable-next-line no-undef
-if (process.env.LOG_LEVEL === 'debug') {
-  // console.log('Environment Variables:', process.env); // This will print all environment variables
-}
 
 // Start a server listening on this port
 const server = stoppable(
-  app.listen(port, '0.0.0.0', () => {
+  app.listen(port, () => {
+    // Log a message that the server has started, and which port it's using.
     logger.info(`Server started on port ${port}`);
-    
+    logger.debug({env:process.env}, `Environment Variables`);
   })
 );
 

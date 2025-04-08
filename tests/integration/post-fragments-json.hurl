@@ -21,7 +21,7 @@ jsonpath "$.fragment.created" isString
 jsonpath "$.fragment.updated" isString
 jsonpath "$.fragment.type" == "application/json"
 jsonpath "$.fragment.size" == 83
-# Capture the Location URL into a variable named url
+# Capture the Location URL into a variable named `url`
 [Captures]
 url: header "Location"
 

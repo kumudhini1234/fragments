@@ -1,49 +1,68 @@
-# Stage 1: Build dependencies in a temporary container
-FROM node:20-alpine AS builder
+# Dockerfile for the Fragments Microservice
+# This is a text file that will define all of the Docker instructions necessary 
+# for Docker Engine to build an image of the Fragments Microservice.
 
-LABEL maintainer="Kumudhini Reddicherla <kreddicherla@myseneca.ca>"
-LABEL description="Fragments node.js microservice"
+# Stage 0: Install alpine Linux + node + dependencies
+# Use node version 20.10.0
+FROM node:20.10.0-alpine3.19@sha256:9e38d3d4117da74a643f67041c83914480b335c3bd44d37ccf5b5ad86cd715d1 AS dependencies
 
-ENV PORT=8080 \
-    NODE_ENV=production \
-    NPM_CONFIG_LOGLEVEL=warn \
+# Use /app as our working directory
+WORKDIR /app
+
+# Option 1: explicit path - Copy the package.json and package-lock.json
+# files into /app. NOTE: the trailing `/` on `/app/`, which tells Docker
+# that `app` is a directory and not a file.
+COPY --chown=node:node package*.json /app/
+
+# Install node devDependencies
+RUN npm ci --production
+
+#######################################################################
+
+# Stage 1: Build the application
+FROM node:20.10.0-alpine3.19@sha256:9e38d3d4117da74a643f67041c83914480b335c3bd44d37ccf5b5ad86cd715d1 AS builder 
+
+WORKDIR /app
+
+# Copy cached dependencies from previous stage so we don't have to download
+COPY --from=dependencies --chown=node:node /app/node_modules /app/node_modules
+COPY --from=dependencies --chown=node:node /app/package.json /app/package.json
+
+# Copy src to /app/src/
+COPY --chown=node:node ./src ./src
+
+# Copy our HTPASSWD file
+COPY --chown=node:node ./tests/.htpasswd ./tests/.htpasswd
+
+#######################################################################
+
+# Stage 2: Final Image with environment variables + health check
+FROM node:20.10.0-alpine3.19@sha256:9e38d3d4117da74a643f67041c83914480b335c3bd44d37ccf5b5ad86cd715d1 
+
+LABEL maintainer="Kumudhini Reddicherla <kreddicherla@myseneca.ca>" \
+      description="Fragments node.js microservice"
+
+WORKDIR /app
+
+#copy from builder
+COPY --from=builder --chown=node:node /app /app
+
+# We default to use port 8080 in our service
+ENV PORT=8080\
+    # Reduce npm spam when installing within Docker
+    # https://docs.npmjs.com/cli/v8/using-npm/config#loglevel
+    NPM_CONFIG_LOGLEVEL=warn\
+    # Disable colour when run inside Docker
+    # https://docs.npmjs.com/cli/v8/using-npm/config#color
     NPM_CONFIG_COLOR=false
 
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm ci --only=production
-
-COPY ./src ./src
-COPY ./tests/.htpasswd ./tests/.htpasswd
-
-# Stage 2: Create a minimal production image
-FROM node:20-alpine
-
-ENV PORT=8080 \
-    NODE_ENV=production
-
-WORKDIR /app
-
-
-
-# ✅ Install aws-cli with version pinning
-RUN apk add --no-cache curl=8.12.1-r1 aws-cli=2.22.10-r0
-
-COPY --from=builder /app .
-
+# We run our service on port 8080
 EXPOSE 8080
 
-# ✅ Use JSON array format for CMD
-CMD ["sh", "-c", \
-  "echo 'Waiting for AWS services to be ready...' && \
-  sleep 30 && \
-  echo 'Setting up local AWS resources...' && \
-  aws --endpoint-url=http://dynamodb-local:8000 dynamodb create-table \
-    --table-name fragments \
-    --attribute-definitions AttributeName=ownerId,AttributeType=S AttributeName=id,AttributeType=S \
-    --key-schema AttributeName=ownerId,KeyType=HASH AttributeName=id,KeyType=RANGE \
-    --billing-mode PAY_PER_REQUEST && \
-  aws --endpoint-url=http://localstack:4566 s3api create-bucket --bucket kreddicherla-fragments && \
-  echo 'All set. Starting app now...' && \
-  npm start"]   
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+  CMD curl --fail localhost:8080 || exit 1
+
+# USER node 
+
+# Start the container by running our server
+CMD ["node", "./src/index.js"]

@@ -1,7 +1,5 @@
 // tests/unit/get.test.js
 
-//updated one
-
 const request = require('supertest');
 const app = require('../../src/app');
 const { Fragment } = require('../../src/model/fragment');
@@ -23,10 +21,9 @@ describe('GET /v1/fragments', () => {
     expect(Array.isArray(res.body.fragments)).toBe(true);
   });
 
-  // TODO: we'll need to add tests to check the contents of the fragments array later
-
   // Retrieved Fragment array should match expect result
   test('Retrieved fragments array includes expected ids', async () => {
+    // Create test fragments and save in database
     const hashedOwnerId = hashEmail('user1@email.com');
     const fragment1 = new Fragment({
       ownerId: hashedOwnerId,
@@ -41,6 +38,7 @@ describe('GET /v1/fragments', () => {
     await fragment1.setData(Buffer.from('a'));
     await fragment2.setData(Buffer.from('b'));
 
+    // Make a get request to get back a list of id of the current user
     const res = await request(app).get('/v1/fragments').auth('user1@email.com', 'password1');
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe('ok');
@@ -48,7 +46,7 @@ describe('GET /v1/fragments', () => {
 
     // Expected idList:
     const idList = await Fragment.byUser(hashedOwnerId);
-
+    // Check if the response contains the created/expected ids
     idList.forEach((id) => {
       expect(res.body.fragments).toContain(id);
     });
@@ -59,6 +57,7 @@ describe('GET /v1/fragments', () => {
 
   // Test for expanded fragments when expend=1
   test('returns expanded fragments when expand=1', async () => {
+    // Create test fragments and save in database
     const hashedOwnerId = hashEmail('user1@email.com');
     const fragment1 = new Fragment({
       ownerId: hashedOwnerId,
@@ -73,6 +72,7 @@ describe('GET /v1/fragments', () => {
     await fragment1.setData(Buffer.from('a'));
     await fragment2.setData(Buffer.from('<h1>b</h1>'));
 
+    // Make a get request to get back the expanded fragments
     const res = await request(app)
       .get('/v1/fragments?expand=1')
       .auth('user1@email.com', 'password1');
@@ -86,8 +86,9 @@ describe('GET /v1/fragments', () => {
     await Fragment.delete(hashedOwnerId, fragment2.id);
   });
 
-  // Simulate an error in Fragment.byUser when a GET /fragments request is made, and verify the response.
+  // Mock byUser throw an error when send a request to Get /fragments route and check the output
   test('returns 500 when an error occurs', async () => {
+    // Mock byUser() throw an error
     const mockByUser = jest
       .spyOn(Fragment, 'byUser')
       .mockRejectedValue(new Error('Error retrieving fragments for user'));
@@ -102,6 +103,7 @@ describe('GET /v1/fragments', () => {
       },
     });
 
+    // Restore the original method
     mockByUser.mockRestore();
   });
 });

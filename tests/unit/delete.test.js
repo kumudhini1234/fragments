@@ -1,3 +1,5 @@
+// test/unit/delete.test.js
+
 const request = require('supertest');
 const app = require('../../src/app');
 const { Fragment } = require('../../src/model/fragment');
@@ -42,7 +44,7 @@ describe('Delete /v1/fragments:id', () => {
     expect(delRes.status).toBe(404);
     expect(delRes.body.status).toBe('error');
     expect(delRes.body.error.code).toBe(404);
-    expect(delRes.body.error.message).toEqual('Fragment not found'); // Adjusted the expected message
+    expect(delRes.body.error.message).toEqual('Fragment by id not found');
   });
 
   // An internal server error should return 500
@@ -68,7 +70,7 @@ describe('Delete /v1/fragments:id', () => {
     expect(delRes.body.status).toBe('error');
     expect(delRes.body.error.code).toBe(500);
     expect(delRes.body.error.message).toEqual(
-      'Failed to retrieve data: fragment.setData is not a function' // Adjusted the expected message
+      'Internal Server error occur while deleting the fragment'
     );
 
     // Restore the original method

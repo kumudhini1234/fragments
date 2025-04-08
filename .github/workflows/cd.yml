@@ -26,19 +26,16 @@ jobs:
     name: AWS
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Check out the code from git
       - name: Check out code
         uses: actions/checkout@v4
 
-      # Step 2: Use buildx, which is faster and can optimize the build steps
+      # Use buildx, which is faster and can optimize the build steps
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v2
 
       # NOTE: ending and restarting the Learner Lab will void these secrets,
       # update them if you are doing this during a new session:
       # `Error: The security token included in the request is expired`
-
-      # Step 3: Configure AWS credentials for GitHub Actions using Secrets
       - name: Configure AWS Credentials using Secrets
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -46,7 +43,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-          # Hard-code our region, which isn't a secret, and may be updated
+          # Hard-code our region, which isn't a secret, and won't change
           aws-region: us-east-1
 
       # Login to our ECR repository using the configured credentials
@@ -67,7 +64,7 @@ jobs:
           # if we have to test or debug something. Second, we'll also replace the
           # `latest` tag, since this is our most up-to-date version.
           VERSION_TAG: ${{ github.ref_name }}
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v4
         with:
           push: true
           # Use the git tag version and `latest`
@@ -86,12 +83,16 @@ jobs:
           VERSION_TAG: ${{ github.ref_name }}
         with:
           task-definition: fragments-definition.json
+          # Match this with the name in fragments-definition.json
           container-name: fragments-container
           # Use the image we just built and pushed to ECR for this tag
           image: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPO }}:${{ env.VERSION_TAG }}
           # Add all the necessary environment variables, using GitHub Encrypted Secrets
           # for any values that should not be checked into git directly.  Here are
           # a few to get you started, but you should fill in the rest yourself.
+          # No need AWS credentials under env since labRole is set for executionRoleArn & taskRoleArn in task definition
+          # AWS S3 bucket name & DynamoDB table name is added as env in fragments-definition.json
+          # so need to add them here
           environment-variables: |
             LOG_LEVEL=debug
             NODE_ENV=production
@@ -99,14 +100,9 @@ jobs:
             AWS_REGION=us-east-1
             AWS_COGNITO_POOL_ID=${{ secrets.AWS_COGNITO_POOL_ID }}
             AWS_COGNITO_CLIENT_ID=${{ secrets.AWS_COGNITO_CLIENT_ID }}
-            AWS_S3_BUCKET_NAME=kreddicherla-fragments
-            
-            AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
-            AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            AWS_SESSION_TOKEN=${{ secrets.AWS_SESSION_TOKEN }}
 
       - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.update-task-def.outputs.task-definition }}
           cluster: fragments-cluster
