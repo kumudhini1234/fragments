@@ -460,7 +460,7 @@ user1@email.com:password1
 HTTP/1.1 200
 Content-Type: application/yaml
 [Asserts]
-body contains "myName: Kumudhini\r\nprogram: BSD"
+body matches /myName: Kumudhini\r?\nprogram: BSD/
 
 
 #7.3. GET the application/yaml fragment as .yaml
@@ -472,7 +472,8 @@ user1@email.com:password1
 HTTP/1.1 200
 Content-Type: application/yaml
 [Asserts]
-body contains "myName: Kumudhini\r\nprogram: BSD"
+body matches /myName: Kumudhini\r?\nprogram: BSD/
+
 
 
 
@@ -485,5 +486,5 @@ user1@email.com:password1
 HTTP/1.1 200
 Content-Type: text/plain; charset=utf-8
 [Asserts]
-body contains "myName: Kumudhini\r\nprogram: BSD"
+body matches /myName: Kumudhini\r?\nprogram: BSD/
 
