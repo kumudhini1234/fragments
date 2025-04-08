@@ -90,6 +90,7 @@ jobs:
           for i in {1..60}; do  # Increased the number of retries to 60
             if nc -z localhost 8080; then
               echo "✅ Server is ready!"
+              npm run test:integration
               exit 0
             fi
             echo "Still waiting... ($i)"
@@ -98,8 +99,8 @@ jobs:
           echo "❌ Server failed to start within expected time."
           exit 1
 
-      - name: Run Hurl Tests
-        run: npm run test:integration
+      # - name: Run Hurl Tests
+      #   run: npm run test:integration
 
   docker-hub:
     name: Build and Push to Docker Hub
