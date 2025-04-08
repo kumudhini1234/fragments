@@ -90,7 +90,7 @@ jobs:
           for i in {1..60}; do  # Increased the number of retries to 60
             if nc -z localhost 8080; then
               echo "✅ Server is ready!"
-              sleep 300
+              sleep 60
               exit 0
             fi
             echo "Still waiting... ($i)"
