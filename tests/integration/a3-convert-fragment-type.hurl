@@ -446,7 +446,7 @@ jsonpath "$.fragment.ownerId" matches "^[0-9a-fA-F]+$"
 jsonpath "$.fragment.created" isString
 jsonpath "$.fragment.updated" isString
 jsonpath "$.fragment.type" == "application/yaml"
-jsonpath "$.fragment.size" == 31
+jsonpath "$.fragment.size" == 30
 [Captures]
 url7: header "Location"
 
