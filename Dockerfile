@@ -5,14 +5,16 @@ LABEL maintainer="Kumudhini Reddicherla <kreddicherla@myseneca.ca>"
 LABEL description="Fragments node.js microservice"
 
 ENV PORT=8080 \
-    NODE_ENV=production \
+    NODE_ENV=dev \
     NPM_CONFIG_LOGLEVEL=warn \
     NPM_CONFIG_COLOR=false
 
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm ci --only=dev
+
+RUN npm install
 
 COPY ./src ./src
 COPY ./tests/.htpasswd ./tests/.htpasswd
@@ -21,7 +23,7 @@ COPY ./tests/.htpasswd ./tests/.htpasswd
 FROM node:20-alpine
 
 ENV PORT=8080 \
-    NODE_ENV=production
+    NODE_ENV=dev
 
 WORKDIR /app
 

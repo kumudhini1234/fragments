@@ -1,6 +1,6 @@
 # tests/integration/lab-10-DynamoDB.hurl
 # Authenticated POST to /v1/fragments
-POST http://localhost:8080/v1/fragments
+POST http://fragments-lb-240530837.us-east-1.elb.amazonaws.com/v1/fragments
 # We're sending a plain text fragment
 Content-Type: application/json
 # Include HTTP Basic Auth credentials
@@ -48,7 +48,7 @@ jsonpath "$.fragment.updated" isString
 jsonpath "$.fragment.size" == 29
 jsonpath "$.fragment.type" == "application/json"
 
-POST http://localhost:8080/v1/fragments
+POST http://fragments-lb-240530837.us-east-1.elb.amazonaws.com/v1/fragments
 # We're sending a markdown text fragment
 Content-Type: text/markdown
 # Include HTTP Basic Auth credentials
@@ -95,7 +95,7 @@ jsonpath "$.fragment.size" == 22
 jsonpath "$.fragment.type" == "text/markdown"
 
 # 2. Try to GET all the fragments without expanding
-GET http://localhost:8080/v1/fragments
+GET http://fragments-lb-240530837.us-east-1.elb.amazonaws.com/v1/fragments
 [BasicAuth]
 user1@email.com:password1
 
@@ -119,7 +119,7 @@ user1@email.com:password1
 
 HTTP/1.1 404
 
-GET http://localhost:8080/v1/fragments
+GET http://fragments-lb-240530837.us-east-1.elb.amazonaws.com/v1/fragments
 [BasicAuth]
 user1@email.com:password1
 

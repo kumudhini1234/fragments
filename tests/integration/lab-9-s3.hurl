@@ -1,7 +1,7 @@
 # tests/integration/lab-9-s3.hurl
 
 # 1. POST a new text fragment
-POST http://localhost:8080/v1/fragments
+POST http://fragments-lb-240530837.us-east-1.elb.amazonaws.com/v1/fragments
 Content-Type: text/plain
 [BasicAuth]
 user1@email.com:password1
@@ -24,7 +24,7 @@ jsonpath "$.fragment.size" == 9
 jsonpath "$.fragment.type" == "text/plain"
 
 # 3. POST a second fragment (JSON)
-POST http://localhost:8080/v1/fragments
+POST http://fragments-lb-240530837.us-east-1.elb.amazonaws.com/v1/fragments
 Content-Type: application/json
 [BasicAuth]
 user1@email.com:password1
@@ -37,7 +37,7 @@ fragment2_url: header "Location"
 fragment2_id: jsonpath "$.fragment.id"
 
 # 4. GET all fragments
-GET http://localhost:8080/v1/fragments
+GET http://fragments-lb-240530837.us-east-1.elb.amazonaws.com/v1/fragments
 [BasicAuth]
 user1@email.com:password1
 
@@ -61,7 +61,7 @@ user1@email.com:password1
 HTTP/1.1 404
 
 # 7. Verify fragment list after deletion
-GET http://localhost:8080/v1/fragments
+GET http://fragments-lb-240530837.us-east-1.elb.amazonaws.com/v1/fragments
 [BasicAuth]
 user1@email.com:password1
 

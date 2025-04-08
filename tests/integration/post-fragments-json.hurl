@@ -1,7 +1,7 @@
 # tests/integration/post-fragments-json.hurl
 # 1. Posting a fragment of json type
 # Authenticated POST to /v1/fragments
-POST http://localhost:8080/v1/fragments
+POST http://fragments-lb-240530837.us-east-1.elb.amazonaws.com/v1/fragments
 Content-Type: application/json
 [BasicAuth]
 user1@email.com:password1
