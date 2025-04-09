@@ -110,4 +110,4 @@ user1@email.com:password1
 HTTP/1.1 200
 [Asserts]
 jsonpath "$.fragments" not includes {{fragment1_id}}
-jsonpath "$.fragments" includes {{fragment2_id}}
+jsonpath "$.fragments" includes {{fragment2_id}}  
